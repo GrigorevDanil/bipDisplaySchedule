@@ -1,21 +1,23 @@
 "use client";
 
-import { getGroupSchedules } from "@/shared/api/schedule";
-import { Schedule } from "@/shared/api/schedule/model";
-import { useEffect, useState } from "react";
+import { ScheduleLayout } from "@/shared/ui/scheduleLayout";
+import { HeaderSchedule } from "@/widgets/headerSchedule/index";
+import { WeekSchedule } from "@/widgets/weekSchedule";
 
 export const HomePage = () => {
-  const [groups, setGroups] = useState<Schedule[]>([]);
-
-  useEffect(() => {
-    const init = async () => {
-      setGroups(await getGroupSchedules("ИП-4", new Date()));
-    };
-
-    init();
-  }, []);
-
-  console.log(groups);
-
-  return <h1>Hello, Next.js!</h1>;
+  return (
+    <ScheduleLayout>
+      <HeaderSchedule />
+      <WeekSchedule group="ОЗФО-4б" />
+      <WeekSchedule group="ОЗФО-4б" />
+      <WeekSchedule group="ОЗФО-4б" />
+      <WeekSchedule group="ОЗФО-4б" />
+      <WeekSchedule group="ОЗФО-4б" />
+      <WeekSchedule group="ОЗФО-4б" />
+      <WeekSchedule group="ОЗФО-4б" />
+      <WeekSchedule group="ОЗФО-4б" />
+      <WeekSchedule group="ОЗФО-4б" />
+      <WeekSchedule group="ОЗФО-4б" />
+    </ScheduleLayout>
+  );
 };

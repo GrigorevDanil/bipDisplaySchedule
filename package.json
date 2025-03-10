@@ -11,6 +11,7 @@
   "dependencies": {
     "@heroui/button": "2.2.13",
     "@heroui/code": "2.2.10",
+    "@heroui/divider": "^2.2.10",
     "@heroui/input": "2.4.13",
     "@heroui/kbd": "2.2.10",
     "@heroui/link": "2.2.11",
@@ -23,7 +24,7 @@
     "@react-aria/ssr": "3.9.7",
     "@react-aria/visually-hidden": "3.8.19",
     "axios": "^1.8.1",
-    "clsx": "2.1.1",
+    "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "11.13.1",
     "intl-messageformat": "^10.5.0",
