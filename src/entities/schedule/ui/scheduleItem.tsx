@@ -3,18 +3,16 @@ import { Divider } from "@heroui/divider";
 
 type Props = {
   schedule: Schedule;
-  start: string;
-  end: string;
 };
 
-export const ScheduleItem = ({ schedule, start, end }: Props) => {
+export const ScheduleItem = ({ schedule }: Props) => {
   return (
     <div className="w-full h-fit rounded-lg flex shadow text-xs pl-1 pr-5 py-0.5">
       {/* Время (20%) */}
       <div className="w-[20%] flex flex-col justify-center items-center text-[10px]">
-        <p className="font-semibold">{start}</p>
+        <p className="font-semibold">{schedule.start}</p>
         <Divider className="w-[50%]" />
-        <p className="color-gray-400">{end}</p>
+        <p className="color-gray-400">{schedule.end}</p>
       </div>
 
       {/* Вертикальный разделитель */}
@@ -25,7 +23,7 @@ export const ScheduleItem = ({ schedule, start, end }: Props) => {
         {/* Дисциплина и номер пары */}
         <div className="flex justify-between items-center">
           {/* Дисциплина (слева) */}
-          <p className="font-semibold text-left leading-none">
+          <p className="font-semibold text-left leading-none truncate w-56">
             {schedule.discipline}
           </p>
 

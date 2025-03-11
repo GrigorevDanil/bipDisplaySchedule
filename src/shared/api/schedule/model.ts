@@ -6,4 +6,7 @@ export type Schedule = {
   territory: string;
   hall: string;
   groups: string[];
+  date: Date;
+  start: string;
+  end: string;
 };

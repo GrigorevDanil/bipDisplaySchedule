@@ -1,4 +1,5 @@
 import axios from "axios";
+import { TimeSchedule } from "./model";
 
 export const getTimes = async (date: Date) => {
   try {
@@ -10,7 +11,7 @@ export const getTimes = async (date: Date) => {
       }
     );
 
-    return response.data;
+    return response.data as TimeSchedule[];
   } catch (error) {
     console.error("Ошибка в getTimes:", error);
     throw error;

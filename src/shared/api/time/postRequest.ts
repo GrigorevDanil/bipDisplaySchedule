@@ -49,6 +49,7 @@ export const postRequestTime = async (date: Date): Promise<TimeShedule[]> => {
             numLesson: row["m:NumberLesson"].trim(),
             start: row["m:Begin"].trim().slice(3),
             end: row["m:End"].trim().slice(3),
+            date: date,
           };
         });
 

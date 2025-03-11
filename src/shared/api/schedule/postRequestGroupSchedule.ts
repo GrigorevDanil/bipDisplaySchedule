@@ -3,6 +3,7 @@ import { password, url, username } from "../settingServer";
 import { parseXml } from "../parserXml";
 import { format } from "date-fns";
 import { Schedule } from "./model";
+import { getTimes } from "../time";
 
 export const postRequestGroupSchedule = async (
   titleGroup: string,
@@ -30,6 +31,8 @@ export const postRequestGroupSchedule = async (
       },
     });
 
+    const timeSchedule = await getTimes(date);
+
     return new Promise((resolve, reject) => {
       parseXml(response.data, { explicitArray: false }, (err, result) => {
         if (err) {
@@ -56,6 +59,10 @@ export const postRequestGroupSchedule = async (
           const teacherShort = `${teacherParts[0]} ${teacherParts[1][0]}.${teacherParts[2][0]}.`;
           const numLesson = row["m:NumberLesson"].trim();
 
+          const timeSlot = timeSchedule.find(
+            (time) => time.numLesson === row["m:NumberLesson"].trim()
+          );
+
           const key = numLesson;
 
           if (!scheduleMap[key]) {
@@ -67,6 +74,9 @@ export const postRequestGroupSchedule = async (
               territory: row["m:Territory"]["m:Name"].trim(),
               hall: row["m:LectureHall"]["m:Name"].trim(),
               groups: [row["m:Group"].trim()],
+              date: date,
+              start: timeSlot?.start || "",
+              end: timeSlot?.end || "",
             };
           } else {
             scheduleMap[key].groups.push(row["m:Group"].trim());

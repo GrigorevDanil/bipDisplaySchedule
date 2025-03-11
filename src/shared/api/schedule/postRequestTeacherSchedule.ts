@@ -67,6 +67,7 @@ export const postRequestTeacherShedule = async (
               territory: row["m:Territory"]["m:Name"].trim(),
               hall: row["m:LectureHall"]["m:Name"].trim(),
               groups: [row["m:Group"].trim()],
+              date: date,
             };
           } else {
             scheduleMap[key].groups.push(row["m:Group"].trim());

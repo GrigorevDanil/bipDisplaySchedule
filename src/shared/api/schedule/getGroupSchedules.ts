@@ -12,7 +12,7 @@ export const getGroupSchedules = async (group: string, date: Date) => {
 
     return response.data;
   } catch (error) {
-    console.error("Ошибка в getGroupTimes:", error);
+    console.error("Ошибка в getGroupSchedules:", error);
     throw error;
   }
 };
