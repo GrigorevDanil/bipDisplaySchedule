@@ -1,6 +1,5 @@
-import axios from "axios";
+import { httpClient } from "../httpClient";
 import { parseXml } from "../parserXml";
-import { url, username, password } from "@/shared/api/settingServer";
 import { Group } from "./model";
 
 export const postRequestGroup = async (): Promise<Group[]> => {
@@ -13,10 +12,7 @@ export const postRequestGroup = async (): Promise<Group[]> => {
   </soapenv:Envelope>`;
 
   try {
-    const response = await axios.post(url, xmls, {
-      headers: { "Content-Type": "application/xml" },
-      auth: { username, password },
-    });
+    const response = await httpClient({ data: xmls });
 
     const groups = await new Promise<Group[]>((resolve, reject) => {
       parseXml(response.data, { explicitArray: false }, (err, result) => {

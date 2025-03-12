@@ -2,7 +2,7 @@
 
 import { weekScheduleModel } from "@/entities/weekSchedule";
 import { WeekScheduleItem } from "@/entities/weekSchedule/ui";
-import { Group } from "@/shared/api/group/model";
+import { getGroups } from "@/shared/api/group";
 
 import { ScheduleLayout } from "@/shared/ui/scheduleLayout";
 import { HeaderSchedule } from "@/widgets/headerSchedule/index";
@@ -16,8 +16,12 @@ export const HomePage = observer(() => {
   } = weekScheduleModel;
 
   useEffect(() => {
-    const groups: Group[] = [{ title: "ИП-4" }, { title: "Ф-4Б" }];
-    getWeekSchedulesByGroups(groups);
+    const setup = async () => {
+      console.log(getGroups());
+      //getWeekSchedulesByGroups([{ title: "ИП-4" }]);
+    };
+
+    setup();
   }, []);
 
   return (

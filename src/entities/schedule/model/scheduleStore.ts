@@ -46,11 +46,22 @@ export class ScheduleStore {
         startOfWeek.clone().add(index, "days").toDate()
       );
 
-      // Fetch schedule for each day of the week
-      for (const date of weekDates) {
-        const data = await getGroupSchedules(titleGroup, date);
-        weeklySchedule.push(...data);
-      }
+      // Fetch schedule for all days of the week in parallel
+      const schedulesPromises = weekDates.map((date) =>
+        getGroupSchedules(titleGroup, date)
+      );
+      const results = await Promise.allSettled(schedulesPromises);
+
+      // Process results and combine successful schedules
+      results.forEach((result, index) => {
+        if (result.status === "fulfilled") {
+          weeklySchedule.push(...result.value);
+        } else {
+          console.log(
+            `Error fetching schedule for ${weekDates[index].toISOString()}: ${result.reason}`
+          );
+        }
+      });
 
       // Update state with the weekly schedule
       runInAction(() => {

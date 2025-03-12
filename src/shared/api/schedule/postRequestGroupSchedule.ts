@@ -1,9 +1,8 @@
-import axios from "axios";
-import { password, url, username } from "../settingServer";
 import { parseXml } from "../parserXml";
 import { format } from "date-fns";
 import { Schedule } from "./model";
 import { getTimes } from "../time";
+import { httpClient } from "../httpClient";
 
 export const postRequestGroupSchedule = async (
   titleGroup: string,
@@ -21,15 +20,7 @@ export const postRequestGroupSchedule = async (
 </soapenv:Envelope>`;
 
   try {
-    const response = await axios.post(url, xmls, {
-      headers: {
-        "Content-Type": "application/xml",
-      },
-      auth: {
-        username: username,
-        password: password,
-      },
-    });
+    const response = await httpClient({ data: xmls });
 
     const timeSchedule = await getTimes(date);
 

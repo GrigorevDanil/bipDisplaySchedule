@@ -1,10 +1,9 @@
-import axios from "axios";
-import { password, url, username } from "../settingServer";
 import { parseXml } from "../parserXml";
 import { format } from "date-fns";
-import { TimeShedule } from "./model";
+import { TimeSchedule } from "./model";
+import { httpClient } from "../httpClient";
 
-export const postRequestTime = async (date: Date): Promise<TimeShedule[]> => {
+export const postRequestTime = async (date: Date): Promise<TimeSchedule[]> => {
   const xmls = `<?xml version="1.0" encoding="utf-8"?>
   <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://lockalhost/Shedule">
     <soapenv:Header/>
@@ -16,15 +15,7 @@ export const postRequestTime = async (date: Date): Promise<TimeShedule[]> => {
 </soapenv:Envelope>`;
 
   try {
-    const response = await axios.post(url, xmls, {
-      headers: {
-        "Content-Type": "application/xml",
-      },
-      auth: {
-        username: username,
-        password: password,
-      },
-    });
+    const response = await httpClient({ data: xmls });
 
     return new Promise((resolve, reject) => {
       parseXml(response.data, { explicitArray: false }, (err, result) => {
@@ -44,7 +35,7 @@ export const postRequestTime = async (date: Date): Promise<TimeShedule[]> => {
 
         const rows = [responseBody["m:RowsOfTime"]].flat();
 
-        const timeSchedule: TimeShedule[] = rows.map((row: any) => {
+        const timeSchedule: TimeSchedule[] = rows.map((row: any) => {
           return {
             numLesson: row["m:NumberLesson"].trim(),
             start: row["m:Begin"].trim().slice(3),
