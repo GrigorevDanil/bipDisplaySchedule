@@ -1,7 +1,16 @@
 import axios from "axios";
 import { TimeSchedule } from "./model";
+import { getTimeScheduleKey } from "@/shared/lib/storage";
+import { getItem, setItem } from "@/shared/lib/cache";
 
-export const getTimes = async (date: Date) => {
+export const getTimes = async (date: Date): Promise<TimeSchedule[]> => {
+  const cacheKey = getTimeScheduleKey(date);
+
+  const cachedData = getItem(cacheKey);
+  if (cachedData) {
+    return JSON.parse(cachedData);
+  }
+
   try {
     const response = await axios.post(
       "http://localhost:3000/api/time",
@@ -11,7 +20,9 @@ export const getTimes = async (date: Date) => {
       }
     );
 
-    return response.data as TimeSchedule[];
+    const data = response.data as TimeSchedule[];
+    setItem(cacheKey, JSON.stringify(data), 1000 * 60 * 15); // Кэш на 15 минут
+    return data;
   } catch (error) {
     console.error("Ошибка в getTimes:", error);
     throw error;

@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 // Интерфейс для хранения данных с TTL
 interface StorageItem {
   value: string;
@@ -64,3 +66,6 @@ export const clearStorage = () => {
     console.error("Error clearing storage", error);
   }
 };
+
+export const getTimeScheduleKey = (date: Date) =>
+  "time_" + format(date, "yyyy-MM-dd");
