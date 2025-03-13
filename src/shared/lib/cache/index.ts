@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 interface StorageItem {
   value: string;
   timestamp?: number;
@@ -25,3 +27,6 @@ export const getItem = (key: string): string | null => {
   }
   return item.value;
 };
+
+export const getTimeScheduleKey = (date: Date) =>
+  "time_" + format(date, "yyyy-MM-dd");

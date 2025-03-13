@@ -1,7 +1,6 @@
 import axios from "axios";
 import { TimeSchedule } from "./model";
-import { getTimeScheduleKey } from "@/shared/lib/storage";
-import { getItem, setItem } from "@/shared/lib/cache";
+import { getItem, getTimeScheduleKey, setItem } from "@/shared/lib/cache";
 
 export const getTimes = async (date: Date): Promise<TimeSchedule[]> => {
   const cacheKey = getTimeScheduleKey(date);
