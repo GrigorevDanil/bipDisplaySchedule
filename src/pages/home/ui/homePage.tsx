@@ -11,6 +11,7 @@ import { Icon } from "./icon";
 import { useEffect, useState } from "react";
 import { groupModel } from "@/entities/group";
 import { setItem } from "@/shared/lib/storage";
+import { Tooltip } from "@heroui/react";
 
 export const HomePage = observer(() => {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -78,31 +79,37 @@ export const HomePage = observer(() => {
         <div className="flex justify-between place-items-center">
           <p className="text-3xl font-bold">Расписание БиП</p>
           <div className="flex gap-2">
-            <Button
-              size="lg"
-              color={selectedCollection ? 'primary' : 'default'}
-              isIconOnly={true}
-              isDisabled={!selectedCollection || upCheck}
-              onPress={moveCollectionUp}
-              startContent={<Icon data={mdiArrowUpBold}></Icon>}
-            />
-            <Button
-              size="lg"
-              color={selectedCollection ? 'primary' : 'default'}
-              isIconOnly={true}
-              isDisabled={!selectedCollection || downCheck}
-              onPress={moveCollectionDown}
-              startContent={<Icon data={mdiArrowDownBold}></Icon>}
-            />
-            <Button
-              size="lg"
-              color={selectedCollection ? 'warning' : 'default'}
-              variant="ghost"
-              isIconOnly={true}
-              isDisabled={!selectedCollection}
-              onPress={unselectCollection}
-              startContent={<Icon data={mdiSelection}></Icon>}
-            />
+            <Tooltip color='primary' content="Переместить коллекцию вверх" closeDelay={0}>
+              <Button
+                size="lg"
+                color={selectedCollection ? 'primary' : 'default'}
+                isIconOnly={true}
+                isDisabled={!selectedCollection || upCheck}
+                onPress={moveCollectionUp}
+                startContent={<Icon data={mdiArrowUpBold}></Icon>}
+              />
+            </Tooltip>
+            <Tooltip color='primary' content="Переместить коллекцию вниз" closeDelay={0}>
+              <Button
+                size="lg"
+                color={selectedCollection ? 'primary' : 'default'}
+                isIconOnly={true}
+                isDisabled={!selectedCollection || downCheck}
+                onPress={moveCollectionDown}
+                startContent={<Icon data={mdiArrowDownBold}></Icon>}
+              />
+            </Tooltip>
+            <Tooltip color='warning' content="Снять выделение" closeDelay={0}>
+              <Button
+                size="lg"
+                color={selectedCollection ? 'warning' : 'default'}
+                variant="ghost"
+                isIconOnly={true}
+                isDisabled={!selectedCollection}
+                onPress={unselectCollection}
+                startContent={<Icon data={mdiSelection}></Icon>}
+              />
+            </Tooltip>
           </div>
         </div>
 
@@ -143,6 +150,6 @@ export const HomePage = observer(() => {
           </Button>
         </div>
       </div>
-    </BaseLayout>
+    </BaseLayout >
   );
 });

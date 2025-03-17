@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@heroui/button";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, useDisclosure } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, useDisclosure, Tooltip } from "@heroui/react";
 import { Collection } from "@/shared/api/group/model";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Icon } from "@/pages/home/ui/icon";
@@ -47,17 +47,15 @@ export const CollectionDisplay = ({ selectedCollectionId, collections, setSelect
   };
 
   const addCollection = () => {
-    const id = collections.length + 1;
+    let counter = 1;
     let title = "Коллекция";
-    let counter = id;
 
-    while (collections.some(col => col.title === `${title} ${counter}`)) {
+    while (collections.some(col => col.title === `${title} ${counter}` || col.id == counter))
       counter++;
-    }
 
     title = `${title} ${counter}`;
 
-    setCollections((lastCollection) => [...lastCollection, { id, title, groups: [] }]);
+    setCollections((lastCollection) => [...lastCollection, { id: counter, title, groups: [] }]);
   };
 
   const deleteCollection = () => {
@@ -110,37 +108,41 @@ export const CollectionDisplay = ({ selectedCollectionId, collections, setSelect
           {collections.map((item) =>
             <div key={item.id}>
               {editingCollection === item.title ? (
-                <Input
-                  type="text"
-                  value={newTitle}
-                  isRequired
-                  placeholder="Введите название коллекции"
-                  isInvalid={nameConflict}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  onBlur={cancelEdit}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleEditComplete(item.title);
-                    if (e.key === "Escape") cancelEdit();
-                  }}
-                  className="w-full"
-                  classNames={{
-                    input: 'text-center',
-                    inputWrapper: 'ring-2 ring-focus ring-offset-2 ring-offset-background'
-                  }}
-                  autoFocus
-                />
+                <Tooltip content="Enter для сохранения" closeDelay={0} placement="left" isOpen={true}>
+                  <Input
+                    type="text"
+                    value={newTitle}
+                    isRequired
+                    placeholder="Введите название коллекции"
+                    isInvalid={nameConflict}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    onBlur={cancelEdit}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleEditComplete(item.title);
+                      if (e.key === "Escape") cancelEdit();
+                    }}
+                    className="w-full"
+                    classNames={{
+                      input: 'text-center',
+                      inputWrapper: 'ring-2 ring-focus ring-offset-2 ring-offset-background'
+                    }}
+                    autoFocus
+                  />
+                </Tooltip>
               ) : (
-                <Button
-                  className="w-full"
-                  size="md"
-                  color={selectedCollectionId === item.id ? "primary" : "default"}
-                  onPress={() =>
-                    selectedCollectionId === item.id ? setSelectedCollectionId(null) : setSelectedCollectionId(item.id)
-                  }
-                  onDoubleClick={() => handleDoubleClick(item)}
-                >
-                  {item.title}
-                </Button>
+                <Tooltip content="Двойной клик для редактирования названия" closeDelay={0} placement="left">
+                  <Button
+                    className="w-full"
+                    size="md"
+                    color={selectedCollectionId === item.id ? "primary" : "default"}
+                    onPress={() =>
+                      selectedCollectionId === item.id ? setSelectedCollectionId(null) : setSelectedCollectionId(item.id)
+                    }
+                    onDoubleClick={() => handleDoubleClick(item)}
+                  >
+                    {item.title}
+                  </Button>
+                </Tooltip>
               )}
             </div>
           )}
@@ -148,24 +150,28 @@ export const CollectionDisplay = ({ selectedCollectionId, collections, setSelect
       </div>
 
       <div className="flex -mt-14 mb-2 mx-2 justify-between">
-        <Button
-          size="lg"
-          color="success"
-          className="opacity-50 hover:opacity-100"
-          isIconOnly={true}
-          onPress={addCollection}
-          startContent={<Icon data={mdiPlusThick}></Icon>}
-        />
+        <Tooltip color='success' content="Добавить коллекцию" closeDelay={0}>
+          <Button
+            size="lg"
+            color="success"
+            className="opacity-50 hover:opacity-100"
+            isIconOnly={true}
+            onPress={addCollection}
+            startContent={<Icon data={mdiPlusThick}></Icon>}
+          />
+        </Tooltip>
 
-        <Button
-          size="lg"
-          color={selectedCollectionId ? 'danger' : 'default'}
-          className={"hover:opacity-100 " + (!selectedCollectionId ? 'invisible' : 'opacity-50')}
-          isIconOnly={true}
-          isDisabled={!selectedCollectionId}
-          onPress={onOpen}
-          startContent={<Icon data={mdiTrashCan}></Icon>}
-        />
+        <Tooltip color='danger' content="Удалить коллекцию" closeDelay={0}>
+          <Button
+            size="lg"
+            color={selectedCollectionId ? 'danger' : 'default'}
+            className={"hover:opacity-100 " + (!selectedCollectionId ? 'invisible' : 'opacity-50')}
+            isIconOnly={true}
+            isDisabled={!selectedCollectionId}
+            onPress={onOpen}
+            startContent={<Icon data={mdiTrashCan}></Icon>}
+          />
+        </Tooltip>
       </div>
     </div>
   );

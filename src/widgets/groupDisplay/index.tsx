@@ -2,7 +2,7 @@
 
 import { Button } from "@heroui/button";
 import { Collection, Group } from "@/shared/api/group/model";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, useDisclosure } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Input, useDisclosure, Tooltip } from "@heroui/react";
 import { Icon } from "@/pages/home/ui/icon";
 import { mdiPlusThick, mdiTrashCan } from "@mdi/js";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -152,24 +152,28 @@ export const GroupDisplay = ({ selectedCollection, setCollections, groups }: Gro
       </div>
 
       <div className="flex -mt-14 mx-2 justify-between">
-        <Button
-          size="lg"
-          color="success"
-          className="opacity-50 hover:opacity-100"
-          isIconOnly={true}
-          onPress={onOpen}
-          startContent={<Icon data={mdiPlusThick}></Icon>}
-        />
+        <Tooltip color='success' content="Добавить группу" closeDelay={0}>
+          <Button
+            size="lg"
+            color="success"
+            className="opacity-50 hover:opacity-100"
+            isIconOnly={true}
+            onPress={onOpen}
+            startContent={<Icon data={mdiPlusThick}></Icon>}
+          />
+        </Tooltip>
 
-        <Button
-          size="lg"
-          color={selectedGroup ? 'danger' : 'default'}
-          className={"hover:opacity-100 " + (!selectedGroup ? 'invisible' : 'opacity-50')}
-          isIconOnly={true}
-          isDisabled={!selectedGroup}
-          onPress={removeGroup}
-          startContent={<Icon data={mdiTrashCan}></Icon>}
-        />
+        <Tooltip color='danger' content="Удалить группу" closeDelay={0}>
+          <Button
+            size="lg"
+            color={selectedGroup ? 'danger' : 'default'}
+            className={"hover:opacity-100 " + (!selectedGroup ? 'invisible' : 'opacity-50')}
+            isIconOnly={true}
+            isDisabled={!selectedGroup}
+            onPress={removeGroup}
+            startContent={<Icon data={mdiTrashCan}></Icon>}
+          />
+        </Tooltip>
       </div>
     </div>
   );
