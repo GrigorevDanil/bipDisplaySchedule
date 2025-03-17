@@ -1,9 +1,11 @@
 import { getGroups } from "@/shared/api/group";
-import { Group } from "@/shared/api/group/model";
+import { Collection, Group } from "@/shared/api/group/model";
+import { getItem } from "@/shared/lib/storage";
 import { makeAutoObservable, runInAction } from "mobx";
 
 class GroupStore {
   groupList: Group[] = [];
+  collectionList: Collection[] = [];
   isLoading = false;
   groupListError = "";
   isUpdateLoading = false;
@@ -31,6 +33,19 @@ class GroupStore {
       }
     }
   };
+
+  getCollectionList = () => {
+    const collectionsData = getItem('collections');
+
+    if (!collectionsData)
+      return runInAction(() => {
+        this.collectionList = [];
+      });
+
+    runInAction(() => {
+      this.collectionList = JSON.parse(collectionsData);
+    });
+  }
 }
 
 export const store = new GroupStore();

@@ -1,4 +1,4 @@
-import {heroui} from "@heroui/theme"
+import { heroui } from "@heroui/theme"
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -15,5 +15,8 @@ module.exports = {
     },
   },
   darkMode: "class",
-  plugins: [heroui()],
+  plugins: [heroui(), require('tailwind-scrollbar')({
+    nocompatible: true,
+    preferredStrategy: 'pseudoelements',
+  })],
 }

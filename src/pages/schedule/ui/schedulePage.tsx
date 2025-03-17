@@ -2,7 +2,7 @@
 
 import { weekScheduleModel } from "@/entities/weekSchedule";
 import { WeekScheduleItem } from "@/entities/weekSchedule/ui";
-import { BaseLayout } from "@/shared/ui/baseLayout";
+import { ScheduleLayout } from "@/shared/ui/scheduleLayout";
 
 import { HeaderSchedule } from "@/widgets/headerSchedule/index";
 import { Spinner } from "@heroui/spinner";
@@ -33,7 +33,7 @@ export const SchedulePage = observer(() => {
   }, []);
 
   return (
-    <BaseLayout>
+    <ScheduleLayout>
       <HeaderSchedule />
       {isLoading ? (
         <Spinner className="m-auto" color="default" size="lg" />
@@ -42,6 +42,6 @@ export const SchedulePage = observer(() => {
           return <WeekScheduleItem key={index} weekSchedule={item} />;
         })
       )}
-    </BaseLayout>
+    </ScheduleLayout>
   );
 });
