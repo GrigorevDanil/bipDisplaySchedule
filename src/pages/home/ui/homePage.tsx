@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { groupModel } from "@/entities/group";
 import { setItem } from "@/shared/lib/storage";
 import { Tooltip } from "@heroui/react";
+import { SettingsDisplay } from "@/widgets/settingsDisplay";
 
 export const HomePage = observer(() => {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -19,6 +20,7 @@ export const HomePage = observer(() => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [upCheck, setUpCheck] = useState<boolean>(false);
   const [downCheck, setDownCheck] = useState<boolean>(false);
+  const [isOpenedSettings, changeSettingsDisplay] = useState<boolean>(false);
 
   const selectedCollection = collections.find(c => c.id === selectedCollectionId) || null;
 
@@ -76,6 +78,8 @@ export const HomePage = observer(() => {
   return (
     <BaseLayout className="items-center justify-center">
       <div className="flex flex-col bg-gray-50 rounded-xl p-8 gap-8">
+        <SettingsDisplay isOpenedSettings={isOpenedSettings} changeSettingsDisplay={changeSettingsDisplay} />
+
         <div className="flex justify-between place-items-center">
           <p className="text-3xl font-bold">Расписание БиП</p>
           <div className="flex gap-2">
@@ -145,6 +149,7 @@ export const HomePage = observer(() => {
           <Button
             size="lg"
             startContent={<Icon data={mdiCog}></Icon>}
+            onPress={() => changeSettingsDisplay(true)}
           >
             Настройки
           </Button>
