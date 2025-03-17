@@ -29,7 +29,7 @@ export const WeekScheduleItem = ({ weekSchedule }: Props) => {
         </div>
         <Divider orientation="horizontal" />
         {/* Days of the Week */}
-        <div className="flex-1 flex flex-col items-center justify-between w-full divide-y-3 divide-blue-500">
+        <div className="flex-1 flex flex-col items-center justify-between w-full divide-y-3 gap-1 divide-blue-500">
           {DAYS_OF_WEEK.map((day, index) => {
             // Фильтруем занятия для текущего дня
             const daySchedules = weekSchedule.schedules.filter((schedule) => {
@@ -40,7 +40,7 @@ export const WeekScheduleItem = ({ weekSchedule }: Props) => {
             return (
               <div
                 key={index}
-                className="flex-1 flex flex-col w-full min-h-0" // flex-1 для равной высоты
+                className="flex-1 flex flex-col w-full min-h-0 pt-1" // flex-1 для равной высоты
               >
                 {/* Отображаем занятия, если они есть */}
                 {daySchedules.map((schedule, idx) => (

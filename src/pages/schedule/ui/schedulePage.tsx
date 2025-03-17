@@ -2,7 +2,6 @@
 
 import { weekScheduleModel } from "@/entities/weekSchedule";
 import { WeekScheduleItem } from "@/entities/weekSchedule/ui";
-import { getGroups } from "@/shared/api/group";
 import { BaseLayout } from "@/shared/ui/baseLayout";
 
 import { HeaderSchedule } from "@/widgets/headerSchedule/index";
@@ -21,6 +20,11 @@ export const SchedulePage = observer(() => {
       getWeekSchedulesByGroups([
         { title: "ИП-4" },
         { title: "Ф-4Б" },
+        { title: "ИС-1А" },
+        { title: "ИС-1А" },
+        { title: "ИС-1А" },
+        { title: "ИС-1А" },
+        { title: "ИС-1А" },
         { title: "ИС-1А" },
       ]);
     };

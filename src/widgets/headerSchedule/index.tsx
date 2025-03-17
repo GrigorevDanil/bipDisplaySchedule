@@ -14,7 +14,7 @@ export const HeaderSchedule = () => {
         </div>
         <Divider orientation="horizontal" />
         {/* Days of the Week */}
-        <div className="flex-1 flex flex-col items-center justify-between w-full ">
+        <div className="flex-1 flex flex-col items-center justify-between w-full divide-y-3 gap-1 divide-blue-500">
           {DAYS_OF_WEEK.map((item, index) => (
             <>
               <div
@@ -27,12 +27,6 @@ export const HeaderSchedule = () => {
                   ))}
                 </p>
               </div>
-              {index !== DAYS_OF_WEEK.length - 1 && (
-                <Divider
-                  className="bg-blue-500 p-px rounded-lg"
-                  orientation="horizontal"
-                />
-              )}
             </>
           ))}
         </div>
