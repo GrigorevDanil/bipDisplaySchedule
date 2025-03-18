@@ -2,7 +2,6 @@ import { Divider } from "@heroui/divider";
 import { DAYS_OF_WEEK } from "@/shared/lib/constants";
 import { ScheduleItem } from "@/entities/schedule/ui";
 import { WeekSchedule } from "../model/model";
-import clsx from "clsx";
 
 type Props = {
   weekSchedule: WeekSchedule;

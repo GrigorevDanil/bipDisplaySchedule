@@ -3,7 +3,14 @@
 import { BaseLayout } from "@/shared/ui/baseLayout";
 import { GroupDisplay } from "@/widgets/groupDisplay";
 import { CollectionDisplay } from "@/widgets/collectionDisplay";
-import { mdiArrowDownBold, mdiArrowUpBold, mdiCog, mdiLibraryShelves, mdiRefreshAuto, mdiSelection } from '@mdi/js';
+import {
+  mdiArrowDownBold,
+  mdiArrowUpBold,
+  mdiCog,
+  mdiLibraryShelves,
+  mdiRefreshAuto,
+  mdiSelection,
+} from "@mdi/js";
 import { Button } from "@heroui/button";
 import { Group, Collection } from "@/shared/api/group/model";
 import { observer } from "mobx-react-lite";
@@ -15,20 +22,28 @@ import { Tooltip } from "@heroui/react";
 
 export const HomePage = observer(() => {
   const [groups, setGroups] = useState<Group[]>([]);
-  const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
+  const [selectedCollectionId, setSelectedCollectionId] = useState<
+    number | null
+  >(null);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [upCheck, setUpCheck] = useState<boolean>(false);
   const [downCheck, setDownCheck] = useState<boolean>(false);
 
-  const selectedCollection = collections.find(c => c.id === selectedCollectionId) || null;
+  const selectedCollection =
+    collections.find((c) => c.id === selectedCollectionId) || null;
 
   const {
     store: { getCollectionList, getGroupList },
   } = groupModel;
 
   const checkArrows = () => {
-    setUpCheck(collections.findIndex(c => c.id === selectedCollection?.id) <= 0);
-    setDownCheck(collections.findIndex(c => c.id === selectedCollection?.id) >= collections.length - 1);
+    setUpCheck(
+      collections.findIndex((c) => c.id === selectedCollection?.id) <= 0
+    );
+    setDownCheck(
+      collections.findIndex((c) => c.id === selectedCollection?.id) >=
+        collections.length - 1
+    );
   };
 
   useEffect(() => checkArrows(), [selectedCollection]);
@@ -47,24 +62,104 @@ export const HomePage = observer(() => {
     });
   }, [getGroupList]);
 
-  useEffect(() => setItem('collections', JSON.stringify(collections)), [collections]);
+  useEffect(
+    () => setItem("collections", JSON.stringify(collections)),
+    [collections]
+  );
+
+  const handleOpenScheduleOnDisplays = async () => {
+    if (collections.length === 0) return;
+
+    let screens: Array<{
+      left: number;
+      top: number;
+      width: number;
+      height: number;
+      isPrimary: boolean;
+    }> = [];
+
+    if ("getScreenDetails" in window) {
+      try {
+        const screenDetails = await (
+          window.getScreenDetails as () => Promise<any>
+        )();
+        screens = screenDetails.screens.filter(
+          (screen: any) => !screen.isPrimary
+        );
+        console.log("Вторичные экраны:", screens);
+
+        if (screens.length === 0) {
+          alert("Вторичные экраны не найдены.");
+          return;
+        }
+      } catch (error) {
+        console.error("Ошибка Window Management API:", error);
+        alert("Не удалось найти вторичные экраны.");
+        return;
+      }
+    } else {
+      alert("Требуется поддержка Window Management API (Chrome/Edge).");
+      return;
+    }
+
+    collections.forEach((collection, index) => {
+      const screenIndex = index % screens.length;
+      const screen = screens[screenIndex];
+
+      const url = `http://localhost:3000/schedule/${collection.id}`;
+      const windowFeatures = `
+        left=${screen.left},
+        top=${screen.top},
+        width=${screen.width},
+        height=${screen.height},
+        menubar=no,
+        toolbar=no,
+        location=no,
+        status=no
+      `;
+
+      window.open(url, `_blank_${collection.id}`, windowFeatures);
+    });
+
+    setTimeout(async () => {
+      try {
+        const response = await fetch("/api/run-ahk", { method: "POST" });
+        const result = await response.json();
+        if (response.ok) {
+          console.log("AHK успешно запущен:", result.message);
+        } else {
+          console.error("Ошибка API:", result.error);
+          alert("Не удалось запустить полноэкранный режим.");
+        }
+      } catch (error) {
+        console.error("Ошибка вызова API:", error);
+        alert("Ошибка связи с сервером для запуска полноэкранного режима.");
+      }
+    }, 1000);
+  };
 
   const moveCollectionUp = () => {
     if (!selectedCollection || collections.length === 0) return;
-    const index = collections.findIndex(c => c.id === selectedCollection.id);
+    const index = collections.findIndex((c) => c.id === selectedCollection.id);
     if (index > 0) {
       const newCollections = [...collections];
-      [newCollections[index - 1], newCollections[index]] = [newCollections[index], newCollections[index - 1]];
+      [newCollections[index - 1], newCollections[index]] = [
+        newCollections[index],
+        newCollections[index - 1],
+      ];
       setCollections(newCollections);
     }
   };
 
   const moveCollectionDown = () => {
     if (!selectedCollection || collections.length === 0) return;
-    const index = collections.findIndex(c => c.id === selectedCollection.id);
+    const index = collections.findIndex((c) => c.id === selectedCollection.id);
     if (index < collections.length - 1) {
       const newCollections = [...collections];
-      [newCollections[index], newCollections[index + 1]] = [newCollections[index + 1], newCollections[index]];
+      [newCollections[index], newCollections[index + 1]] = [
+        newCollections[index + 1],
+        newCollections[index],
+      ];
       setCollections(newCollections);
     }
   };
@@ -79,30 +174,38 @@ export const HomePage = observer(() => {
         <div className="flex justify-between place-items-center">
           <p className="text-3xl font-bold">Расписание БиП</p>
           <div className="flex gap-2">
-            <Tooltip color='primary' content="Переместить коллекцию вверх" closeDelay={0}>
+            <Tooltip
+              color="primary"
+              content="Переместить коллекцию вверх"
+              closeDelay={0}
+            >
               <Button
                 size="lg"
-                color={selectedCollection ? 'primary' : 'default'}
+                color={selectedCollection ? "primary" : "default"}
                 isIconOnly={true}
                 isDisabled={!selectedCollection || upCheck}
                 onPress={moveCollectionUp}
                 startContent={<Icon data={mdiArrowUpBold}></Icon>}
               />
             </Tooltip>
-            <Tooltip color='primary' content="Переместить коллекцию вниз" closeDelay={0}>
+            <Tooltip
+              color="primary"
+              content="Переместить коллекцию вниз"
+              closeDelay={0}
+            >
               <Button
                 size="lg"
-                color={selectedCollection ? 'primary' : 'default'}
+                color={selectedCollection ? "primary" : "default"}
                 isIconOnly={true}
                 isDisabled={!selectedCollection || downCheck}
                 onPress={moveCollectionDown}
                 startContent={<Icon data={mdiArrowDownBold}></Icon>}
               />
             </Tooltip>
-            <Tooltip color='warning' content="Снять выделение" closeDelay={0}>
+            <Tooltip color="warning" content="Снять выделение" closeDelay={0}>
               <Button
                 size="lg"
-                color={selectedCollection ? 'warning' : 'default'}
+                color={selectedCollection ? "warning" : "default"}
                 variant="ghost"
                 isIconOnly={true}
                 isDisabled={!selectedCollection}
@@ -132,6 +235,7 @@ export const HomePage = observer(() => {
             size="lg"
             color="primary"
             startContent={<Icon data={mdiLibraryShelves}></Icon>}
+            onPress={handleOpenScheduleOnDisplays}
           >
             Вывести расписание
           </Button>
@@ -142,14 +246,11 @@ export const HomePage = observer(() => {
           >
             Автозапуск
           </Button>
-          <Button
-            size="lg"
-            startContent={<Icon data={mdiCog}></Icon>}
-          >
+          <Button size="lg" startContent={<Icon data={mdiCog}></Icon>}>
             Настройки
           </Button>
         </div>
       </div>
-    </BaseLayout >
+    </BaseLayout>
   );
 });

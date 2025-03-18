@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
-
-module.exports = nextConfig;
+module.exports = {
+  reactStrictMode: true, // Optional: Enables React Strict Mode
+  devIndicators: {
+    buildActivity: true, // Shows build activity indicator
+  },
+};
