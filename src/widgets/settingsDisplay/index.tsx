@@ -23,6 +23,7 @@ export const SettingsDisplay = ({ isOpenedSettings, changeSettingsDisplay }: Set
     const [increaseDisabled, setIncreaseDisabled] = useState<boolean>(false);
     const [decreaseDisabled, setDecreaseDisabled] = useState<boolean>(true);
 
+
     useEffect(() => {
         getSettings();
         setSettings(settingsModel.store.settings);
@@ -31,7 +32,19 @@ export const SettingsDisplay = ({ isOpenedSettings, changeSettingsDisplay }: Set
     useEffect(() => checkValidation(), [settings]);
 
     const changeServerAddress = (newAdress: string) => {
-        setSettings({ serverAddress: newAdress.trim(), refreshDelay: settings.refreshDelay });
+        setSettings({
+            autoHotkeyPath: settings.autoHotkeyPath,
+            serverAddress: newAdress.trim(),
+            refreshDelay: settings.refreshDelay
+        });
+    };
+
+    const changeAutoHotkeyPath = (newPath: string) => {
+        setSettings({
+            autoHotkeyPath: newPath.trim(),
+            serverAddress: settings.serverAddress,
+            refreshDelay: settings.refreshDelay
+        });
     };
 
     const checkValidation = () => {
@@ -40,11 +53,19 @@ export const SettingsDisplay = ({ isOpenedSettings, changeSettingsDisplay }: Set
     };
 
     const increaseRefreshDelay = () => {
-        setSettings({ serverAddress: settings.serverAddress, refreshDelay: settings.refreshDelay + 5 });
+        setSettings({
+            autoHotkeyPath: settings.autoHotkeyPath,
+            serverAddress: settings.serverAddress,
+            refreshDelay: settings.refreshDelay + 5
+        });
     };
 
     const decreaseRefreshDelay = () => {
-        setSettings({ serverAddress: settings.serverAddress, refreshDelay: settings.refreshDelay - 5 });
+        setSettings({
+            autoHotkeyPath: settings.autoHotkeyPath,
+            serverAddress: settings.serverAddress,
+            refreshDelay: settings.refreshDelay - 5
+        });
     };
 
     const saveSettings = () => {
@@ -76,12 +97,21 @@ export const SettingsDisplay = ({ isOpenedSettings, changeSettingsDisplay }: Set
                                 type="text"
                                 label="Адрес сервера"
                                 isRequired
-                                isInvalid={settings.serverAddress.trim().length == 0}
-                                value={settings.serverAddress.trim()}
+                                isInvalid={settings.serverAddress.length == 0}
+                                value={settings.serverAddress}
                                 onChange={(e) => changeServerAddress(e.target.value)}
                                 placeholder="Введите адрес сервера.."
-                                className="mb-4"
                                 autoFocus
+                            />
+
+                            <Input
+                                type="text"
+                                label="Путь к AutoHotkey"
+                                isRequired
+                                isInvalid={settings.autoHotkeyPath.length == 0}
+                                value={settings.autoHotkeyPath}
+                                onChange={(e) => changeAutoHotkeyPath(e.target.value)}
+                                placeholder="Введите путь к AutoHotkey.exe"
                             />
 
                             <p className="text-center">Интервал обновления данных</p>
@@ -119,10 +149,10 @@ export const SettingsDisplay = ({ isOpenedSettings, changeSettingsDisplay }: Set
                         <Button color="primary" variant="light" onPress={() => changeSettingsDisplay(false)}>
                             Отмена
                         </Button>
-                        <Button color="primary" isDisabled={settings.serverAddress.trim() == defaultSettings.serverAddress.trim() && settings.refreshDelay == defaultSettings.refreshDelay} onPress={resetSettings}>
+                        <Button color="primary" isDisabled={settings.serverAddress == defaultSettings.serverAddress && settings.refreshDelay == defaultSettings.refreshDelay && settings.autoHotkeyPath == defaultSettings.autoHotkeyPath} onPress={resetSettings}>
                             Сброс
                         </Button>
-                        <Button color="success" isDisabled={settings.serverAddress.trim().length == 0} onPress={saveSettings}>
+                        <Button color="success" isDisabled={settings.serverAddress.length == 0 || settings.autoHotkeyPath.length == 0} onPress={saveSettings}>
                             Сохранить
                         </Button>
                     </ModalFooter>
