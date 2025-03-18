@@ -58,7 +58,7 @@ export const SettingsDisplay = ({ isOpenedSettings, changeSettingsDisplay }: Set
     };
 
     return (
-        <div className="flex flex-col gap-0 w-full rounded-xl overflow-clip bg-gray-200/50">
+        <div className="flex flex-col gap-0 -mt-8 w-full rounded-xl overflow-clip bg-gray-200/50">
             <Modal
                 isDismissable={false}
                 isKeyboardDismissDisabled={true}
