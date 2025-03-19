@@ -6,6 +6,7 @@ import { CollectionDisplay } from "@/widgets/collectionDisplay";
 import {
   mdiArrowDownBold,
   mdiArrowUpBold,
+  mdiCloseBox,
   mdiCog,
   mdiLibraryShelves,
   mdiRefreshAuto,
@@ -140,6 +141,20 @@ export const HomePage = observer(() => {
     }, 1000);
   };
 
+  const handleCloseScheduleOnDisplays = () => {
+    if (collections.length === 0) return;
+
+    collections.forEach((collection) => {
+      const windowName = `_blank_${collection.id}`;
+      const scheduleWindow = window.open("", windowName);
+      if (scheduleWindow) {
+        scheduleWindow.close();
+      }
+    });
+
+    console.log("Все окна расписания закрыты");
+  };
+
   const moveCollectionUp = () => {
     if (!selectedCollection || collections.length === 0) return;
     const index = collections.findIndex((c) => c.id === selectedCollection.id);
@@ -245,6 +260,14 @@ export const HomePage = observer(() => {
             onPress={handleOpenScheduleOnDisplays}
           >
             Вывести расписание
+          </Button>
+          <Button
+            size="lg"
+            color="danger"
+            startContent={<Icon data={mdiCloseBox}></Icon>}
+            onPress={handleCloseScheduleOnDisplays}
+          >
+            Закрыть расписание
           </Button>
           <Button
             size="lg"
