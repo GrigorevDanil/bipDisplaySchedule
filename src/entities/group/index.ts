@@ -1,1 +1,1 @@
-export * as groupModel from "./model";
+export * as groupModel from "../group/model";
