@@ -81,23 +81,23 @@ export const HomePage = observer(() => {
       isPrimary: boolean;
     }> = [];
 
+    // Получаем информацию об экранах
     if ("getScreenDetails" in window) {
       try {
         const screenDetails = await (
           window.getScreenDetails as () => Promise<any>
         )();
-        screens = screenDetails.screens.filter(
-          (screen: any) => !screen.isPrimary
-        );
-        console.log("Вторичные экраны:", screens);
+        screens = screenDetails.screens;
+
+        console.log("Все экраны:", screens);
 
         if (screens.length === 0) {
-          alert("Вторичные экраны не найдены.");
+          alert("Экраны не найдены.");
           return;
         }
       } catch (error) {
         console.error("Ошибка Window Management API:", error);
-        alert("Не удалось найти вторичные экраны.");
+        alert("Не удалось получить информацию об экранах.");
         return;
       }
     } else {
@@ -105,40 +105,50 @@ export const HomePage = observer(() => {
       return;
     }
 
-    collections.forEach((collection, index) => {
-      const screenIndex = index % screens.length;
-      const screen = screens[screenIndex];
+    // Находим основной экран
+    const primaryScreen = screens.find((screen) => screen.isPrimary);
+    const secondaryScreens = screens.filter((screen) => !screen.isPrimary);
 
-      const url = `http://localhost:3000/schedule/${collection.id}`;
-      const windowFeatures = `
-        left=${screen.left},
-        top=${screen.top},
-        width=${screen.width},
-        height=${screen.height},
-        menubar=no,
-        toolbar=no,
-        location=no,
-        status=no
-      `;
+    // Открытие окон на вторичных экранах
+    secondaryScreens.forEach((screen, index) => {
+      // Начинаем с 1, так как 0 уже используется на основном экране
+      const collectionIndex = index + 1;
+      if (collectionIndex < collections.length) {
+        const collection = collections[collectionIndex];
+        const url = `http://localhost:3000/schedule/${collection.id}`;
+        const windowFeatures = `
+          left=${screen.left},
+          top=${screen.top},
+          width=${screen.width},
+          height=${screen.height},
+          menubar=no,
+          toolbar=no,
+          location=no,
+          status=no
+        `;
 
-      window.open(url, `_blank_${collection.id}`, windowFeatures);
+        window.open(url, `_blank_${collection.id}`, windowFeatures);
+      }
     });
 
-    setTimeout(async () => {
-      try {
-        const response = await fetch("/api/run-ahk", { method: "POST" });
-        const result = await response.json();
-        if (response.ok) {
-          console.log("AHK успешно запущен:", result.message);
-        } else {
-          console.error("Ошибка API:", result.error);
-          alert("Не удалось запустить полноэкранный режим.");
-        }
-      } catch (error) {
-        console.error("Ошибка вызова API:", error);
-        alert("Ошибка связи с сервером для запуска полноэкранного режима.");
+    try {
+      const response = await fetch("/api/run-ahk", { method: "POST" });
+      const result = await response.json();
+      if (response.ok) {
+        console.log("AHK успешно запущен:", result.message);
+      } else {
+        console.error("Ошибка API:", result.error);
+        alert("Не удалось запустить полноэкранный режим.");
       }
-    }, 1000);
+    } catch (error) {
+      console.error("Ошибка вызова API:", error);
+      alert("Ошибка связи с сервером для запуска полноэкранного режима.");
+    }
+    // Переадресация основного экрана на первую коллекцию
+    if (primaryScreen && collections.length > 0) {
+      const firstCollectionUrl = `/schedule/${collections[0].id}`;
+      window.location.href = firstCollectionUrl; // Переадресация текущего окна
+    }
   };
 
   const handleCloseScheduleOnDisplays = () => {
