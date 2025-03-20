@@ -19,6 +19,7 @@ class WeekScheduleStore {
   getWeekSchedulesByGroups = async (groups: Group[]) => {
     try {
       this.isLoading = true;
+
       const weekSchedules: WeekSchedule[] = [];
 
       // Iterate through each group

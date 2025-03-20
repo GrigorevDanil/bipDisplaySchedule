@@ -33,7 +33,7 @@ export const postRequestGroupSchedule = async (
 
         const responseBody =
           result["soap:Envelope"]?.["soap:Body"]?.["m:GetSheduleResponse"]?.[
-            "m:return"
+          "m:return"
           ];
 
         if (Object.keys(responseBody).length === 1 && responseBody["$"]) {

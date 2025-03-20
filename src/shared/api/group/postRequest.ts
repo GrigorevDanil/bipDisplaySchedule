@@ -23,7 +23,7 @@ export const postRequestGroup = async (): Promise<Group[]> => {
 
         const rowsOfGroup =
           result?.["soap:Envelope"]?.["soap:Body"]?.["m:GetGroupResponse"]?.[
-            "m:return"
+          "m:return"
           ]?.["m:RowsOfGroup"];
 
         if (!rowsOfGroup) {

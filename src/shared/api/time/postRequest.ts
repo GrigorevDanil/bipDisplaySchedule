@@ -26,7 +26,7 @@ export const postRequestTime = async (date: Date): Promise<TimeSchedule[]> => {
 
         const responseBody =
           result["soap:Envelope"]?.["soap:Body"]?.["m:GetTimeResponse"]?.[
-            "m:return"
+          "m:return"
           ];
 
         if (Object.keys(responseBody).length === 1 && responseBody["$"]) {

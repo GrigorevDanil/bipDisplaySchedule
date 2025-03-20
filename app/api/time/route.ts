@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 import { postRequestTime } from "@/shared/api/time";
 
 interface RequestBody {

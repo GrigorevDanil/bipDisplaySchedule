@@ -17,6 +17,12 @@ export const POST = async (request: Request) => {
 
     const schedule = await postRequestGroupSchedule(body.group, date);
 
+    if (!schedule)
+      return NextResponse.json(
+        { error: "Not Authorized" },
+        { status: 401 }
+      );
+
     return NextResponse.json(schedule);
   } catch (error) {
     if (error instanceof Error) {
