@@ -198,7 +198,7 @@ export const HomePage = observer(() => {
   //#endregion
 
   //#region Auth
-  const [auth, setAuth] = useState<Authorization | null>(null);
+  const [auth, setAuth] = useState<Authorization | null | undefined>(null);
 
   const {
     store: { getAuth }
@@ -228,14 +228,15 @@ export const HomePage = observer(() => {
   return (
     <BaseLayout className="items-center justify-center">
       <div className="flex flex-col bg-gray-50 rounded-xl p-8 gap-8">
-        <AuthDisplay auth={auth} isOpenedAuth={isOpenedAuth} isOpenedSettings={isOpenedSettings} setAuth={setAuth} changeAuthDisplay={changeAuthDisplay} changeSettingsDisplay={changeSettingsDisplay} />
-        <SettingsDisplay
-          isOpenedSettings={isOpenedSettings}
-          changeSettingsDisplay={changeSettingsDisplay}
-        />
+        <AuthDisplay auth={auth} isOpenedAuth={isOpenedAuth} setAuth={setAuth} changeAuthDisplay={changeAuthDisplay} />
 
         {!isOpenedAuth ? (
           <>
+            <SettingsDisplay
+              isOpenedSettings={isOpenedSettings}
+              changeSettingsDisplay={changeSettingsDisplay}
+            />
+
             <div className="flex justify-between place-items-center">
               <p className="text-3xl font-bold">Расписание БиП</p>
               <div className="flex gap-2">

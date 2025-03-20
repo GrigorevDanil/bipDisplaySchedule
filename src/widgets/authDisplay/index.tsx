@@ -12,21 +12,19 @@ import {
   ModalFooter,
   Input
 } from "@heroui/react";
-import { mdiCog, mdiKey } from "@mdi/js";
+import { mdiKey } from "@mdi/js";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface AuthDisplayProps {
-  auth: Authorization | null;
+  auth: Authorization | null | undefined;
   isOpenedAuth: boolean;
-  isOpenedSettings: boolean;
-  setAuth: Dispatch<SetStateAction<Authorization | null>>;
+  setAuth: Dispatch<SetStateAction<Authorization | null | undefined>>;
   changeAuthDisplay: Dispatch<SetStateAction<boolean>>;
-  changeSettingsDisplay: Dispatch<SetStateAction<boolean>>;
 }
 
-export const AuthDisplay = ({ auth, isOpenedAuth, isOpenedSettings, setAuth, changeAuthDisplay, changeSettingsDisplay }: AuthDisplayProps) => {
+export const AuthDisplay = ({ auth, isOpenedAuth, setAuth, changeAuthDisplay }: AuthDisplayProps) => {
   const [warningText, setWarningText] = useState<string>("");
-  const [authTemp, setAuthTemp] = useState<Authorization | null>(auth);
+  const [authTemp, setAuthTemp] = useState<Authorization | null | undefined>(auth);
 
   const signIn = () => {
     if (!authTemp?.login || !authTemp.password)
@@ -48,6 +46,7 @@ export const AuthDisplay = ({ auth, isOpenedAuth, isOpenedSettings, setAuth, cha
         isKeyboardDismissDisabled={true}
         isOpen={isOpenedAuth}
         backdrop="blur"
+        hideCloseButton={true}
       >
         <ModalContent>
           <ModalHeader className="gap-1 place-items-center">
@@ -79,12 +78,7 @@ export const AuthDisplay = ({ auth, isOpenedAuth, isOpenedSettings, setAuth, cha
               <p className={`text-danger-500 ${warningText.length == 0 ? '-mt-4' : ''}`}>{warningText}</p>
             </div>
           </ModalBody>
-          <ModalFooter className="flex flex-row justify-between">
-            <Button
-              isIconOnly={true}
-              endContent={<Icon data={mdiCog} />}
-              onPress={() => changeSettingsDisplay(true)}
-            />
+          <ModalFooter>
             <Button
               color="success"
               isDisabled={!authTemp?.login || !authTemp.password}
