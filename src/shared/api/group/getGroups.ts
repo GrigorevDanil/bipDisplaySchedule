@@ -1,8 +1,10 @@
 import axios from "axios";
 
-export const getGroups = async () => {
+export const getGroups = async (serverAddress: string) => {
   try {
-    const response = await axios.post("http://localhost:3000/api/group", null, {
+    const response = await axios.post("http://localhost:3000/api/group", {
+      serverAddress
+    }, {
       headers: { "Content-Type": "application/json" },
     });
 

@@ -17,7 +17,7 @@ import { observer } from "mobx-react-lite";
 import { Icon } from "./icon";
 import { useEffect, useMemo, useState } from "react";
 import { groupModel } from "@/entities/group";
-import { removeItem, setItem } from "@/shared/lib/storage";
+import { removeItem, setItem, getItem } from "@/shared/lib/storage";
 import { Tooltip } from "@heroui/react";
 import { SettingsDisplay } from "@/widgets/settingsDisplay";
 import { CorpusDisplay } from "@/widgets/corpusDisplay";
@@ -25,10 +25,26 @@ import { Authorization } from "@/shared/api/authorization/model";
 import { authModel } from "@/entities/authorization";
 import { userLogin, userPassword } from "@/shared/api/httpClient";
 import { AuthDisplay } from "@/widgets/authDisplay";
+import { settingsModel } from "@/entities/settings";
+import { Settings } from "@/shared/api/settings/model";
 
 export const HomePage = observer(() => {
+  const {
+    store: { defaultSettings, getSettings }
+  } = settingsModel;
+
+  const {
+    store: { getGroupList, getCorpusList, getSelectedCorpusId },
+  } = groupModel;
+
+  const {
+    store: { getAuth }
+  } = authModel;
+
   const [groups, setGroups] = useState<Group[]>([]);
   const [corpuses, setCorpuses] = useState<Corpus[]>([]);
+  const [auth, setAuth] = useState<Authorization | null | undefined>(null);
+  const [settings, setSettings] = useState<Settings>(settingsModel.store.defaultSettings);
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
   const [selectedCorpusId, setSelectedCorpusId] = useState<number | null>(null);
   const [isOpenedSettings, changeSettingsDisplay] = useState<boolean>(false);
@@ -117,17 +133,19 @@ export const HomePage = observer(() => {
     console.log("Все окна расписания закрыты");
   };
 
-  //#region Groups
-  const {
-    store: { getGroupList, getCorpusList, getSelectedCorpusId },
-  } = groupModel;
-
   useEffect(() => {
-    getGroupList().then(() => {
-      if (groups.length === 0 && groupModel.store.groupList.length > 0)
-        setGroups(groupModel.store.groupList);
-    });
-  }, [getGroupList]);
+    getSettings();
+    setSettings(settingsModel.store.settings);
+  }, [getSettings]);
+
+  useEffect(() => setItem('settings', JSON.stringify(settings)), [settings]);
+
+  //#region Groups
+  useEffect(() => {
+    getGroupList(settings.serverAddress).then(() =>
+      setGroups(groupModel.store.groupListError ? [] : groupModel.store.groupList)
+    );
+  }, [getGroupList, settings]);
   //#endregion
 
   //#region Corpuses
@@ -198,12 +216,6 @@ export const HomePage = observer(() => {
   //#endregion
 
   //#region Auth
-  const [auth, setAuth] = useState<Authorization | null | undefined>(null);
-
-  const {
-    store: { getAuth }
-  } = authModel;
-
   useEffect(() => {
     getAuth();
     setAuth(authModel.store.auth);
@@ -234,7 +246,10 @@ export const HomePage = observer(() => {
           <>
             <SettingsDisplay
               isOpenedSettings={isOpenedSettings}
+              settings={settings}
+              defaultSettings={defaultSettings}
               changeSettingsDisplay={changeSettingsDisplay}
+              setSettings={setSettings}
             />
 
             <div className="flex justify-between place-items-center">

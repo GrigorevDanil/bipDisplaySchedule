@@ -6,7 +6,8 @@ import { httpClient } from "../httpClient";
 
 export const postRequestGroupSchedule = async (
   titleGroup: string,
-  date: Date
+  date: Date,
+  serverAddress: string
 ): Promise<Schedule[]> => {
   const xmls = `<?xml version="1.0" encoding="utf-8"?>
   <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://lockalhost/Shedule">
@@ -20,9 +21,12 @@ export const postRequestGroupSchedule = async (
 </soapenv:Envelope>`;
 
   try {
-    const response = await httpClient({ data: xmls });
+    const response = await httpClient({ data: xmls, baseURL: `http://${serverAddress}/Colledge/ws/Shedule` }).catch(() => null);
 
-    const timeSchedule = await getTimes(date);
+    const timeSchedule = await getTimes(date, serverAddress).catch(() => null);
+
+    if (!response || !timeSchedule)
+      throw new Error("No data");
 
     return new Promise((resolve, reject) => {
       parseXml(response.data, { explicitArray: false }, (err, result) => {

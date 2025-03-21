@@ -27,7 +27,7 @@ export const SchedulePage = observer(({ params }: { params: Record<string, strin
   } = authModel;
 
   const {
-    store: { settings, getSettings },
+    store: { getSettings },
   } = settingsModel;
 
   const {
@@ -52,7 +52,10 @@ export const SchedulePage = observer(({ params }: { params: Record<string, strin
         (item) => item.id.toString() === params.id
       )!.groups;
 
-      await getWeekSchedulesByGroups(groups);
+      await getWeekSchedulesByGroups(groups, settingsModel.store.settings.serverAddress);
+
+      if (weekScheduleModel.store.weekScheduleListError)
+        setNoData(true);
     } else
       setNoData(true);
   };
@@ -71,7 +74,7 @@ export const SchedulePage = observer(({ params }: { params: Record<string, strin
       }
 
       // Установка нового интервала обновления (переводим минуты в миллисекунды)
-      const refreshIntervalMs = settings?.refreshDelay * 60 * 1000;
+      const refreshIntervalMs = settingsModel.store.settings.refreshDelay * 60 * 1000;
       intervalRef.current = setInterval(() => {
         fetchScheduleData();
       }, refreshIntervalMs);
@@ -83,7 +86,7 @@ export const SchedulePage = observer(({ params }: { params: Record<string, strin
         clearInterval(intervalRef.current);
       }
     };
-  }, [settings?.refreshDelay]);
+  }, [settingsModel.store.settings.refreshDelay]);
 
   return (
     <ScheduleLayout>

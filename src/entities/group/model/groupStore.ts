@@ -15,15 +15,16 @@ class GroupStore {
     makeAutoObservable(this);
   }
 
-  getGroupList = async () => {
+  getGroupList = async (serverAddress: string) => {
     try {
       this.isLoading = true;
 
-      const data = await getGroups();
+      const data = await getGroups(serverAddress);
 
       runInAction(() => {
         this.isLoading = false;
         this.groupList = data;
+        this.groupListError = "";
       });
     } catch (error) {
       if (error instanceof Error) {

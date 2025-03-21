@@ -1,9 +1,7 @@
 "use client";
 
-import { settingsModel } from "@/entities/settings";
 import { Icon } from "@/pages/home/ui/icon";
 import { Settings } from "@/shared/api/settings/model";
-import { setItem } from "@/shared/lib/storage";
 import { Button } from "@heroui/button";
 import {
   Modal,
@@ -19,23 +17,25 @@ import {
   DropdownItem,
 } from "@heroui/react";
 import { mdiCog, mdiMenuDown, mdiMenuUp, mdiMinusThick, mdiPlusThick } from "@mdi/js";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 
 interface SettingsDisplayProps {
   isOpenedSettings: boolean;
+  settings: Settings;
+  defaultSettings: Settings;
   changeSettingsDisplay: Dispatch<SetStateAction<boolean>>;
+  setSettings: Dispatch<SetStateAction<Settings>>;
 }
 
 export const SettingsDisplay = ({
   isOpenedSettings,
+  settings,
+  defaultSettings,
   changeSettingsDisplay,
+  setSettings
 }: SettingsDisplayProps) => {
-  const {
-    store: { getSettings, defaultSettings },
-  } = settingsModel;
-
   const [dropDownOpen, setDropDownOpen] = useState<boolean>(false);
-  const [settingsData, setSettingsData] = useState<Settings>(settingsModel.store.settings);
+  const [settingsData, setSettingsData] = useState<Settings>(settings);
 
   const selectedCorpusString = useMemo(
     () => settingsData.selectedCorpus == 1 ? "Первый корпус" : "Второй корпус",
@@ -52,19 +52,14 @@ export const SettingsDisplay = ({
     [settingsData.refreshDelay]
   );
 
-  useEffect(() => {
-    getSettings();
-    setSettingsData(settingsModel.store.settings);
-  }, [getSettings]);
-
   const saveSettings = () => {
-    setItem("settings", JSON.stringify(settingsData));
+    setSettings(settingsData);
     changeSettingsDisplay(false);
   };
 
   const resetSettings = () => {
+    setSettings(defaultSettings);
     setSettingsData(defaultSettings);
-    setItem("settings", JSON.stringify(defaultSettings));
   };
 
   return (

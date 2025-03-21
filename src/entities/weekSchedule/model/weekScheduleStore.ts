@@ -16,16 +16,15 @@ class WeekScheduleStore {
   }
 
   // New method to get week schedules for multiple groups
-  getWeekSchedulesByGroups = async (groups: Group[]) => {
+  getWeekSchedulesByGroups = async (groups: Group[], serverAddress: string) => {
     try {
       this.isLoading = true;
 
-      const weekSchedules: WeekSchedule[] = [];
+      const promises = groups.map(group => new Promise<WeekSchedule>(async (res, rej) => {
+        await this.scheduleStore.getCurrentWeekSchedule(group.title, serverAddress);
 
-      // Iterate through each group
-      for (const group of groups) {
-        // Use the existing ScheduleStore to get the weekly schedule
-        await this.scheduleStore.getCurrentWeekSchedule(group.title);
+        if (this.scheduleStore.scheduleListError)
+          rej(this.scheduleStore.scheduleListError);
 
         // Transform the scheduleList into WeekSchedule format
         const groupWeekSchedule: WeekSchedule = {
@@ -34,19 +33,26 @@ class WeekScheduleStore {
           // Add any additional WeekSchedule properties you need
         };
 
-        weekSchedules.push(groupWeekSchedule);
-      }
+        res(groupWeekSchedule);
+      }));
+
+      const weekSchedules = await Promise.allSettled(promises);
+
+      if (weekSchedules.some(i => i.status == 'rejected'))
+        throw new Error("No data");
+
+      const weekSchedulesList = weekSchedules.filter(i => i.status == 'fulfilled').map(i => i.value);
 
       runInAction(() => {
         this.isLoading = false;
-        this.weekScheduleList = weekSchedules;
+        this.weekScheduleList = weekSchedulesList;
+        this.weekScheduleListError = "";
       });
     } catch (error) {
       if (error instanceof Error) {
         runInAction(() => {
           this.isLoading = false;
           this.weekScheduleListError = error.message;
-          console.log(error);
         });
       }
     }

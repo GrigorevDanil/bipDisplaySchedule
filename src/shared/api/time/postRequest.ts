@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { TimeSchedule } from "./model";
 import { httpClient } from "../httpClient";
 
-export const postRequestTime = async (date: Date): Promise<TimeSchedule[]> => {
+export const postRequestTime = async (date: Date, serverAddress: string): Promise<TimeSchedule[]> => {
   const xmls = `<?xml version="1.0" encoding="utf-8"?>
   <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://lockalhost/Shedule">
     <soapenv:Header/>
@@ -15,7 +15,7 @@ export const postRequestTime = async (date: Date): Promise<TimeSchedule[]> => {
 </soapenv:Envelope>`;
 
   try {
-    const response = await httpClient({ data: xmls });
+    const response = await httpClient({ data: xmls, baseURL: `http://${serverAddress}/Colledge/ws/Shedule` });
 
     return new Promise((resolve, reject) => {
       parseXml(response.data, { explicitArray: false }, (err, result) => {

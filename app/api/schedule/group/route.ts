@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 interface GroupRequestBody {
   group: string;
   date: string;
+  serverAddress: string;
 }
 
 export const POST = async (request: Request) => {
@@ -15,7 +16,7 @@ export const POST = async (request: Request) => {
       throw new Error("Invalid date format");
     }
 
-    const schedule = await postRequestGroupSchedule(body.group, date);
+    const schedule = await postRequestGroupSchedule(body.group, date, body.serverAddress);
 
     if (!schedule)
       return NextResponse.json(

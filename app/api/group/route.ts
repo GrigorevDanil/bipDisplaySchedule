@@ -2,9 +2,17 @@ import { NextResponse } from "next/server";
 
 import { postRequestGroup } from "@/shared/api/group/postRequest";
 
-export const POST = async () => {
+export const POST = async (req: Request) => {
+  const data = await req.json();
+
   try {
-    const groups = await postRequestGroup();
+    if (!data?.serverAddress?.trim())
+      return NextResponse.json(
+        { error: "Enter server address in the settings!" },
+        { status: 404 }
+      );
+
+    const groups = await postRequestGroup(data.serverAddress);
 
     return NextResponse.json(groups);
   } catch (error) {
