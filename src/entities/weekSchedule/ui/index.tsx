@@ -1,7 +1,9 @@
 import { Divider } from "@heroui/divider";
+
+import { WeekSchedule } from "../model/model";
+
 import { DAYS_OF_WEEK } from "@/shared/lib/constants";
 import { ScheduleItem } from "@/entities/schedule/ui";
-import { WeekSchedule } from "../model/model";
 
 type Props = {
   weekSchedule: WeekSchedule;
@@ -12,6 +14,7 @@ export const WeekScheduleItem = ({ weekSchedule }: Props) => {
   const getDayNameFromDate = (date: Date | string) => {
     const dateObj = typeof date === "string" ? new Date(date) : date;
     const dayIndex = dateObj.getDay(); // 0 - воскресенье, 1 - понедельник и т.д.
+
     // Сдвигаем, чтобы соответствовать DAYS_OF_WEEK (Понедельник = 0)
     return DAYS_OF_WEEK[dayIndex === 0 ? 6 : dayIndex - 1];
   };
@@ -33,6 +36,7 @@ export const WeekScheduleItem = ({ weekSchedule }: Props) => {
             // Фильтруем занятия для текущего дня
             const daySchedules = weekSchedule.schedules.filter((schedule) => {
               const dayName = getDayNameFromDate(schedule.date);
+
               return dayName === day;
             });
 

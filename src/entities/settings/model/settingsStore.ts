@@ -1,6 +1,7 @@
+import { makeAutoObservable, runInAction } from "mobx";
+
 import { Settings } from "@/shared/api/settings/model";
 import { getItem } from "@/shared/lib/storage";
-import { makeAutoObservable, runInAction } from "mobx";
 
 class SettingsStore {
   defaultSettings: Settings = {

@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import moment from "moment"; // Install with: npm install moment
+
 import { Schedule } from "@/shared/api/schedule/model";
 import { getGroupSchedules } from "@/shared/api/schedule";
 

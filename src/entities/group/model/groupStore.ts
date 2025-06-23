@@ -1,7 +1,8 @@
+import { makeAutoObservable, runInAction } from "mobx";
+
 import { getGroups } from "@/shared/api/group";
 import { Corpus, Group } from "@/shared/api/group/model";
 import { getItem } from "@/shared/lib/storage";
-import { makeAutoObservable, runInAction } from "mobx";
 
 class GroupStore {
   groupList: Group[] = [];

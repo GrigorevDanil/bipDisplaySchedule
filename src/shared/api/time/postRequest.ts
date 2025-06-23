@@ -1,7 +1,10 @@
-import { parseXml } from "../parserXml";
 import { format } from "date-fns";
-import { TimeSchedule } from "./model";
+
+import { parseXml } from "../parserXml";
 import { httpClient } from "../httpClient";
+
+import { TimeSchedule } from "./model";
+
 
 export const postRequestTime = async (date: Date, serverAddress: string): Promise<TimeSchedule[]> => {
   const xmls = `<?xml version="1.0" encoding="utf-8"?>
@@ -21,6 +24,7 @@ export const postRequestTime = async (date: Date, serverAddress: string): Promis
       parseXml(response.data, { explicitArray: false }, (err, result) => {
         if (err) {
           console.error("Ошибка парсинга XML:", err);
+
           return reject(err);
         }
 

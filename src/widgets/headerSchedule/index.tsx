@@ -1,5 +1,6 @@
-import { DAYS_OF_WEEK } from "@/shared/lib/constants";
 import { Divider } from "@heroui/divider";
+
+import { DAYS_OF_WEEK } from "@/shared/lib/constants";
 
 export const HeaderSchedule = () => {
   return (

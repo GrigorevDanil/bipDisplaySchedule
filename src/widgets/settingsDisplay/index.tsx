@@ -1,7 +1,5 @@
 "use client";
 
-import { Icon } from "@/pages/home/ui/icon";
-import { Settings } from "@/shared/api/settings/model";
 import { Button } from "@heroui/button";
 import {
   Modal,
@@ -16,8 +14,17 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/react";
-import { mdiCog, mdiMenuDown, mdiMenuUp, mdiMinusThick, mdiPlusThick } from "@mdi/js";
+import {
+  mdiCog,
+  mdiMenuDown,
+  mdiMenuUp,
+  mdiMinusThick,
+  mdiPlusThick,
+} from "@mdi/js";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
+
+import { Settings } from "@/shared/api/settings/model";
+import { Icon } from "@/pages/home/ui/icon";
 
 interface SettingsDisplayProps {
   isOpenedSettings: boolean;
@@ -32,13 +39,14 @@ export const SettingsDisplay = ({
   settings,
   defaultSettings,
   changeSettingsDisplay,
-  setSettings
+  setSettings,
 }: SettingsDisplayProps) => {
   const [dropDownOpen, setDropDownOpen] = useState<boolean>(false);
   const [settingsData, setSettingsData] = useState<Settings>(settings);
 
   const selectedCorpusString = useMemo(
-    () => settingsData.selectedCorpus == 1 ? "Первый корпус" : "Второй корпус",
+    () =>
+      settingsData.selectedCorpus == 1 ? "Первый корпус" : "Второй корпус",
     [settingsData.selectedCorpus]
   );
 
@@ -65,11 +73,11 @@ export const SettingsDisplay = ({
   return (
     <div className="flex flex-col gap-0 -mt-8 w-full rounded-xl overflow-clip bg-gray-200/50">
       <Modal
+        backdrop="blur"
         isDismissable={false}
         isKeyboardDismissDisabled={true}
         isOpen={isOpenedSettings}
         onOpenChange={(isOpen) => changeSettingsDisplay(isOpen)}
-        backdrop="blur"
       >
         <ModalContent>
           <ModalHeader className="gap-1 place-items-center">
@@ -82,69 +90,100 @@ export const SettingsDisplay = ({
 
                 <Dropdown onOpenChange={setDropDownOpen}>
                   <DropdownTrigger>
-                    <Button color="primary" endContent={<Icon data={dropDownOpen ? mdiMenuUp : mdiMenuDown} />} className="w-full" variant="bordered">
+                    <Button
+                      className="w-full"
+                      color="primary"
+                      endContent={
+                        <Icon data={dropDownOpen ? mdiMenuUp : mdiMenuDown} />
+                      }
+                      variant="bordered"
+                    >
                       {selectedCorpusString}
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu
-                    disabledKeys={[selectedCorpusString]}
                     disallowEmptySelection
                     aria-label="Single selection example"
+                    disabledKeys={[selectedCorpusString]}
                     selectedKeys={[selectedCorpusString]}
                     selectionMode="single"
                     variant="solid"
-                    onSelectionChange={keys => setSettingsData(data => ({ ...data, selectedCorpus: keys.anchorKey == "Первый корпус" ? 1 : 2 }))}
+                    onSelectionChange={(keys) =>
+                      setSettingsData((data) => ({
+                        ...data,
+                        selectedCorpus:
+                          keys.anchorKey == "Первый корпус" ? 1 : 2,
+                      }))
+                    }
                   >
-                    <DropdownItem key={'Первый корпус'}>Первый корпус</DropdownItem>
-                    <DropdownItem key={'Второй корпус'}>Второй корпус</DropdownItem>
+                    <DropdownItem key={"Первый корпус"}>
+                      Первый корпус
+                    </DropdownItem>
+                    <DropdownItem key={"Второй корпус"}>
+                      Второй корпус
+                    </DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
               </div>
 
               <Input
-                type="text"
-                label="Адрес сервера"
                 isRequired
                 isInvalid={settingsData.serverAddress.length == 0}
-                value={settingsData.serverAddress}
-                onChange={(e) => setSettingsData(data => ({ ...data, serverAddress: e.target.value.trim() }))}
+                label="Адрес сервера"
                 placeholder="Введите адрес сервера.."
-                autoFocus
+                type="text"
+                value={settingsData.serverAddress}
+                onChange={(e) =>
+                  setSettingsData((data) => ({
+                    ...data,
+                    serverAddress: e.target.value.trim(),
+                  }))
+                }
               />
 
               <Input
-                type="text"
-                label="Путь к AutoHotkey"
                 isRequired
                 isInvalid={settingsData.autoHotkeyPath.length == 0}
-                value={settingsData.autoHotkeyPath}
-                onChange={(e) => setSettingsData(data => ({ ...data, autoHotkeyPath: e.target.value.trim() }))}
+                label="Путь к AutoHotkey"
                 placeholder="Введите путь к AutoHotkey.exe"
+                type="text"
+                value={settingsData.autoHotkeyPath}
+                onChange={(e) =>
+                  setSettingsData((data) => ({
+                    ...data,
+                    autoHotkeyPath: e.target.value.trim(),
+                  }))
+                }
               />
 
               <p className="text-center">Интервал обновления данных</p>
 
               <div className="flex flex-row justify-between">
                 <Tooltip
+                  closeDelay={0}
                   color="danger"
                   content="Уменьшить интервал"
-                  closeDelay={0}
                 >
                   <Button
-                    size="lg"
                     color="danger"
-                    isIconOnly={true}
                     isDisabled={decreaseDisabled}
-                    onPress={() => setSettingsData(data => ({ ...data, refreshDelay: data.refreshDelay - 5 }))}
-                    startContent={<Icon data={mdiMinusThick}></Icon>}
+                    isIconOnly={true}
+                    size="lg"
+                    startContent={<Icon data={mdiMinusThick} />}
+                    onPress={() =>
+                      setSettingsData((data) => ({
+                        ...data,
+                        refreshDelay: data.refreshDelay - 5,
+                      }))
+                    }
                   />
                 </Tooltip>
 
                 <Tooltip
-                  color="foreground"
-                  showArrow={true}
-                  content="Интервал представлен в минутах"
                   closeDelay={0}
+                  color="foreground"
+                  content="Интервал представлен в минутах"
+                  showArrow={true}
                 >
                   <p className="text-3xl font-bold self-center">
                     {settingsData.refreshDelay}
@@ -153,17 +192,22 @@ export const SettingsDisplay = ({
                 </Tooltip>
 
                 <Tooltip
+                  closeDelay={0}
                   color="success"
                   content="Увеличить интервал"
-                  closeDelay={0}
                 >
                   <Button
-                    size="lg"
                     color="success"
-                    isIconOnly={true}
                     isDisabled={increaseDisabled}
-                    onPress={() => setSettingsData(data => ({ ...data, refreshDelay: data.refreshDelay + 5 }))}
-                    startContent={<Icon data={mdiPlusThick}></Icon>}
+                    isIconOnly={true}
+                    size="lg"
+                    startContent={<Icon data={mdiPlusThick} />}
+                    onPress={() =>
+                      setSettingsData((data) => ({
+                        ...data,
+                        refreshDelay: data.refreshDelay + 5,
+                      }))
+                    }
                   />
                 </Tooltip>
               </div>
@@ -202,6 +246,6 @@ export const SettingsDisplay = ({
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </div >
+    </div>
   );
 };

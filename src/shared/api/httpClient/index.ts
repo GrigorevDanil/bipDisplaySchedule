@@ -17,4 +17,4 @@ const httpClient = axios.create({
   },
 });
 
-export { httpClient, userLogin, userPassword };
+export { httpClient, userLogin, userPassword, username, password };

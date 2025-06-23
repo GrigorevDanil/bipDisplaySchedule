@@ -1,6 +1,7 @@
+import { makeAutoObservable, runInAction } from "mobx";
+
 import { Authorization } from "@/shared/api/authorization/model";
 import { getItem } from "@/shared/lib/storage";
-import { makeAutoObservable, runInAction } from "mobx";
 
 class AuthStore {
   auth: Authorization | null | undefined = null;

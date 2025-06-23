@@ -1,8 +1,10 @@
-import { parseXml } from "../parserXml";
 import { format } from "date-fns";
-import { Schedule } from "./model";
+
+import { parseXml } from "../parserXml";
 import { getTimes } from "../time";
 import { httpClient } from "../httpClient";
+
+import { Schedule } from "./model";
 
 export const postRequestGroupSchedule = async (
   titleGroup: string,
@@ -34,6 +36,7 @@ export const postRequestGroupSchedule = async (
       parseXml(response.data, { explicitArray: false }, (err, result) => {
         if (err) {
           console.error("Ошибка парсинга XML:", err);
+
           return reject(err);
         }
 
@@ -83,6 +86,7 @@ export const postRequestGroupSchedule = async (
         });
 
         const schedule: Schedule[] = Object.values(scheduleMap);
+
         resolve(schedule);
       });
     });

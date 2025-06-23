@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 
 // Интерфейс для хранения данных с TTL
 interface StorageItem {
@@ -35,6 +34,7 @@ export const getItem = (key: string) => {
       if (parsedItem.timestamp && Date.now() > parsedItem.timestamp) {
         // Если TTL истек, удаляем элемент и возвращаем null
         localStorage.removeItem(key);
+
         return null;
       }
 
@@ -45,6 +45,7 @@ export const getItem = (key: string) => {
     return null;
   } catch (error) {
     console.error("Error reading data", error);
+
     return null;
   }
 };

@@ -1,5 +1,6 @@
 import { httpClient } from "../httpClient";
 import { parseXml } from "../parserXml";
+
 import { Group } from "./model";
 
 export const postRequestGroup = async (serverAddress: string): Promise<Group[]> => {
@@ -18,6 +19,7 @@ export const postRequestGroup = async (serverAddress: string): Promise<Group[]> 
       parseXml(response.data, { explicitArray: false }, (err, result) => {
         if (err) {
           console.error("Ошибка парсинга XML:", err);
+
           return reject(err);
         }
 

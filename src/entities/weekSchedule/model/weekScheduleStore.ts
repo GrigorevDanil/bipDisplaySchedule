@@ -1,7 +1,9 @@
 import { makeAutoObservable, runInAction } from "mobx";
+
+import { WeekSchedule } from "./model";
+
 import { ScheduleStore } from "@/entities/schedule/model";
 import { scheduleModel } from "@/entities/schedule";
-import { WeekSchedule } from "./model";
 import { Group } from "@/shared/api/group/model";
 
 class WeekScheduleStore {

@@ -1,8 +1,5 @@
 "use client";
 
-import { BaseLayout } from "@/shared/ui/baseLayout";
-import { GroupDisplay } from "@/widgets/groupDisplay";
-import { CollectionDisplay } from "@/widgets/collectionDisplay";
 import {
   mdiArrowDownBold,
   mdiArrowUpBold,
@@ -12,13 +9,18 @@ import {
   mdiRefreshAuto,
 } from "@mdi/js";
 import { Button } from "@heroui/button";
-import { Group, Corpus } from "@/shared/api/group/model";
 import { observer } from "mobx-react-lite";
-import { Icon } from "./icon";
 import { useEffect, useMemo, useState } from "react";
-import { groupModel } from "@/entities/group";
-import { removeItem, setItem, getItem } from "@/shared/lib/storage";
 import { Tooltip } from "@heroui/react";
+
+import { Icon } from "./icon";
+
+import { BaseLayout } from "@/shared/ui/baseLayout";
+import { GroupDisplay } from "@/widgets/groupDisplay";
+import { CollectionDisplay } from "@/widgets/collectionDisplay";
+import { Group, Corpus } from "@/shared/api/group/model";
+import { groupModel } from "@/entities/group";
+import { removeItem, setItem } from "@/shared/lib/storage";
 import { SettingsDisplay } from "@/widgets/settingsDisplay";
 import { CorpusDisplay } from "@/widgets/corpusDisplay";
 import { Authorization } from "@/shared/api/authorization/model";
@@ -68,6 +70,7 @@ export const HomePage = observer(() => {
         const screenDetails = await (
           window.getScreenDetails as () => Promise<any>
         )();
+
         screens = screenDetails.screens.filter(
           (screen: any) => !screen.isPrimary
         );
@@ -75,15 +78,18 @@ export const HomePage = observer(() => {
 
         if (screens.length === 0) {
           alert("Вторичные экраны не найдены.");
+
           return;
         }
       } catch (error) {
         console.error("Ошибка Window Management API:", error);
         alert("Не удалось найти вторичные экраны.");
+
         return;
       }
     } else {
       alert("Требуется поддержка Window Management API (Chrome/Edge).");
+
       return;
     }
 
@@ -110,6 +116,7 @@ export const HomePage = observer(() => {
       try {
         const response = await fetch("/api/run-ahk", { method: "POST" });
         const result = await response.json();
+
         if (response.ok) {
           console.log("AHK успешно запущен:", result.message);
         } else {
@@ -129,6 +136,7 @@ export const HomePage = observer(() => {
     selectedCorpus.collections.forEach((collection) => {
       const windowName = `_blank_${collection.id}`;
       const scheduleWindow = window.open("", windowName);
+
       if (scheduleWindow) {
         scheduleWindow.close();
       }
@@ -201,8 +209,10 @@ export const HomePage = observer(() => {
     const index = selectedCorpus.collections.findIndex(
       (c) => c.id === selectedCollectionId
     );
+
     if (index > 0) {
       const newCollections = [...selectedCorpus.collections];
+
       [newCollections[index - 1], newCollections[index]] = [
         newCollections[index],
         newCollections[index - 1],
@@ -227,8 +237,10 @@ export const HomePage = observer(() => {
     const index = selectedCorpus.collections.findIndex(
       (c) => c.id === selectedCollectionId
     );
+
     if (index < selectedCorpus.collections.length - 1) {
       const newCollections = [...selectedCorpus.collections];
+
       [newCollections[index], newCollections[index + 1]] = [
         newCollections[index + 1],
         newCollections[index],
@@ -286,50 +298,50 @@ export const HomePage = observer(() => {
       <div className="flex flex-col bg-gray-50 rounded-xl p-8 gap-8">
         <AuthDisplay
           auth={auth}
+          changeAuthDisplay={changeAuthDisplay}
           isOpenedAuth={isOpenedAuth}
           setAuth={setAuth}
-          changeAuthDisplay={changeAuthDisplay}
         />
 
         {!isOpenedAuth ? (
           <>
             <SettingsDisplay
-              isOpenedSettings={isOpenedSettings}
-              settings={settings}
-              defaultSettings={defaultSettings}
               changeSettingsDisplay={changeSettingsDisplay}
+              defaultSettings={defaultSettings}
+              isOpenedSettings={isOpenedSettings}
               setSettings={setSettings}
+              settings={settings}
             />
 
             <div className="flex justify-between place-items-center">
               <p className="text-3xl font-bold">Расписание БиП</p>
               <div className="flex gap-2">
                 <Tooltip
+                  closeDelay={0}
                   color="primary"
                   content="Переместить коллекцию вверх"
-                  closeDelay={0}
                 >
                   <Button
-                    size="lg"
                     color={selectedCollectionId ? "primary" : "default"}
-                    isIconOnly={true}
                     isDisabled={!selectedCollectionId || upCheck}
+                    isIconOnly={true}
+                    size="lg"
+                    startContent={<Icon data={mdiArrowUpBold} />}
                     onPress={moveCollectionUp}
-                    startContent={<Icon data={mdiArrowUpBold}></Icon>}
                   />
                 </Tooltip>
                 <Tooltip
+                  closeDelay={0}
                   color="primary"
                   content="Переместить коллекцию вниз"
-                  closeDelay={0}
                 >
                   <Button
-                    size="lg"
                     color={selectedCollectionId ? "primary" : "default"}
-                    isIconOnly={true}
                     isDisabled={!selectedCollectionId || downCheck}
+                    isIconOnly={true}
+                    size="lg"
+                    startContent={<Icon data={mdiArrowDownBold} />}
                     onPress={moveCollectionDown}
-                    startContent={<Icon data={mdiArrowDownBold}></Icon>}
                   />
                 </Tooltip>
               </div>
@@ -337,46 +349,46 @@ export const HomePage = observer(() => {
 
             <div className="flex flex-row h-[400px]">
               <CorpusDisplay
-                selectedCorpusId={selectedCorpusId}
                 corpuses={corpuses}
-                setSelectedCorpusId={setSelectedCorpusId}
+                selectedCorpusId={selectedCorpusId}
                 setCorpuses={setCorpuses}
+                setSelectedCorpusId={setSelectedCorpusId}
               />
               <CollectionDisplay
                 selectedCollectionId={selectedCollectionId}
                 selectedCorpus={selectedCorpus}
-                setSelectedCollectionId={setSelectedCollectionId}
                 setCorpuses={setCorpuses}
+                setSelectedCollectionId={setSelectedCollectionId}
               />
               <GroupDisplay
+                groups={groups}
                 selectedCollection={selectedCollection}
                 selectedCollectionId={selectedCollectionId}
-                selectedCorpusId={selectedCorpusId}
-                groups={groups}
                 selectedCorpus={selectedCorpus}
+                selectedCorpusId={selectedCorpusId}
                 setCorpuses={setCorpuses}
               />
             </div>
 
             <div className="flex gap-2">
               <Tooltip
+                showArrow
+                closeDelay={0}
                 color="danger"
                 content="Выберите корпус, содержащий коллекции групп"
-                closeDelay={0}
                 isDisabled={
                   selectedCorpus != null &&
                   selectedCorpus.collections?.length > 0
                 }
-                showArrow
               >
                 <span>
                   <Button
-                    size="lg"
                     color="primary"
                     isDisabled={
                       !selectedCorpus || selectedCorpus.collections?.length == 0
                     }
-                    startContent={<Icon data={mdiLibraryShelves}></Icon>}
+                    size="lg"
+                    startContent={<Icon data={mdiLibraryShelves} />}
                     onPress={handleOpenScheduleOnDisplays}
                   >
                     Вывести расписание
@@ -384,23 +396,23 @@ export const HomePage = observer(() => {
                 </span>
               </Tooltip>
               <Button
-                size="lg"
                 color="danger"
-                startContent={<Icon data={mdiCloseBox}></Icon>}
+                size="lg"
+                startContent={<Icon data={mdiCloseBox} />}
                 onPress={handleCloseScheduleOnDisplays}
               >
                 Закрыть расписание
               </Button>
               <Button
-                size="lg"
                 color="success"
-                startContent={<Icon data={mdiRefreshAuto}></Icon>}
+                size="lg"
+                startContent={<Icon data={mdiRefreshAuto} />}
               >
                 Автозапуск
               </Button>
               <Button
                 size="lg"
-                startContent={<Icon data={mdiCog}></Icon>}
+                startContent={<Icon data={mdiCog} />}
                 onPress={() => changeSettingsDisplay(true)}
               >
                 Настройки
