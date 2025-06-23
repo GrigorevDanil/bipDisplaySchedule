@@ -21,12 +21,14 @@ export const postRequestGroupSchedule = async (
 </soapenv:Envelope>`;
 
   try {
-    const response = await httpClient({ data: xmls, baseURL: `http://${serverAddress}/Colledge/ws/Shedule` }).catch(() => null);
+    const response = await httpClient({
+      data: xmls,
+      baseURL: `http://${serverAddress}/Colledge/ws/Shedule`,
+    }).catch(() => null);
 
     const timeSchedule = await getTimes(date, serverAddress).catch(() => null);
 
-    if (!response || !timeSchedule)
-      throw new Error("No data");
+    if (!response || !timeSchedule) throw new Error("No data");
 
     return new Promise((resolve, reject) => {
       parseXml(response.data, { explicitArray: false }, (err, result) => {
@@ -37,7 +39,7 @@ export const postRequestGroupSchedule = async (
 
         const responseBody =
           result["soap:Envelope"]?.["soap:Body"]?.["m:GetSheduleResponse"]?.[
-          "m:return"
+            "m:return"
           ];
 
         if (Object.keys(responseBody).length === 1 && responseBody["$"]) {

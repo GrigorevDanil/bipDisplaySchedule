@@ -1,5 +1,5 @@
-import { Schedule } from "@/shared/api/schedule/model";
 import { Divider } from "@heroui/divider";
+import { Schedule } from "@/shared/api/schedule/model";
 
 type Props = {
   schedule: Schedule;

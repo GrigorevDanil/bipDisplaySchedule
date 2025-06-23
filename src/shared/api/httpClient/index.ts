@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const username = "Student3";
-const password = "Student3";
+const username = "WebService";
+const password = "30pisoM";
 
 const userLogin = "adminStudent3";
 const userPassword = "adminStudent3";
