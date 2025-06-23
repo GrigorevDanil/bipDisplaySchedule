@@ -7,3 +7,9 @@ export type Collection = {
   title: string;
   groups: Group[]
 };
+
+export type Corpus = {
+  id: number;
+  title: string;
+  collections: Collection[]
+};

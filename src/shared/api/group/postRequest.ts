@@ -2,7 +2,7 @@ import { httpClient } from "../httpClient";
 import { parseXml } from "../parserXml";
 import { Group } from "./model";
 
-export const postRequestGroup = async (): Promise<Group[]> => {
+export const postRequestGroup = async (serverAddress: string): Promise<Group[]> => {
   const xmls = `<?xml version="1.0" encoding="utf-8"?>
   <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://lockalhost/Shedule">
       <soapenv:Header/>
@@ -12,7 +12,7 @@ export const postRequestGroup = async (): Promise<Group[]> => {
   </soapenv:Envelope>`;
 
   try {
-    const response = await httpClient({ data: xmls });
+    const response = await httpClient({ data: xmls, baseURL: `http://${serverAddress}/Colledge/ws/Shedule` });
 
     const groups = await new Promise<Group[]>((resolve, reject) => {
       parseXml(response.data, { explicitArray: false }, (err, result) => {
@@ -23,7 +23,7 @@ export const postRequestGroup = async (): Promise<Group[]> => {
 
         const rowsOfGroup =
           result?.["soap:Envelope"]?.["soap:Body"]?.["m:GetGroupResponse"]?.[
-            "m:return"
+          "m:return"
           ]?.["m:RowsOfGroup"];
 
         if (!rowsOfGroup) {

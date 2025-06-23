@@ -4,11 +4,12 @@ import { makeAutoObservable, runInAction } from "mobx";
 
 class SettingsStore {
   defaultSettings: Settings = {
+    selectedCorpus: 1,
     autoHotkeyPath: "C:\\Program Files\\AutoHotkey\\AutoHotkey.exe",
     serverAddress: "85.172.38.9:5580",
     refreshDelay: 5,
   };
-  settings!: Settings;
+  settings = this.defaultSettings;
 
   constructor() {
     makeAutoObservable(this);

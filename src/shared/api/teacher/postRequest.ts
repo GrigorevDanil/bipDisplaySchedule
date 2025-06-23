@@ -33,7 +33,7 @@ export const postRequestTeacher = async (): Promise<Teacher[]> => {
 
         const rows =
           result["soap:Envelope"]["soap:Body"]["m:GetTeacherResponse"][
-            "m:return"
+          "m:return"
           ]["m:RowsOfTeacher"];
 
         const teachers: Teacher[] = rows.map((row: any) => {

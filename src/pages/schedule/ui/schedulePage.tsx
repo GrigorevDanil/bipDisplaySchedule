@@ -1,47 +1,77 @@
 "use client";
 
+import { authModel } from "@/entities/authorization";
 import { settingsModel } from "@/entities/settings";
 import { weekScheduleModel } from "@/entities/weekSchedule";
 import { WeekScheduleItem } from "@/entities/weekSchedule/ui";
-import { Collection } from "@/shared/api/group/model";
+import { Icon } from "@/pages/home/ui/icon";
+
+import { Corpus } from "@/shared/api/group/model";
+import { userLogin, userPassword } from "@/shared/api/httpClient";
 import { getItem } from "@/shared/lib/storage";
 import { ScheduleLayout } from "@/shared/ui/scheduleLayout";
 
 import { HeaderSchedule } from "@/widgets/headerSchedule/index";
 import { Spinner } from "@heroui/spinner";
+import { mdiAlert } from "@mdi/js";
 
 import { observer } from "mobx-react-lite";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export const SchedulePage = observer(
   ({ params }: { params: Record<string, string> }) => {
-    const { id } = params;
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const [noData, setNoData] = useState<boolean>(false);
 
     const {
-      store: { getSettings, settings },
+      store: { getAuth },
+    } = authModel;
+
+    const {
+      store: { getSettings },
     } = settingsModel;
 
     const {
-      store: { weekScheduleList, isLoading, getWeekSchedulesByGroups },
+      store: { isLoading, weekScheduleList, getWeekSchedulesByGroups },
     } = weekScheduleModel;
+
+    const isError = useMemo(
+      () =>
+        noData ||
+        !authModel.store.auth?.login ||
+        !authModel.store.auth.password ||
+        authModel.store.auth.login != userLogin ||
+        authModel.store.auth.password != userPassword,
+      [authModel.store.auth, weekScheduleList, noData]
+    );
 
     // Функция для получения данных расписания
     const fetchScheduleData = async () => {
-      const json = getItem("collections");
-      if (json) {
-        const collections: Collection[] = JSON.parse(json);
-        const groups = collections.find(
-          (item) => item.id.toString() === id
-        )?.groups;
-        getWeekSchedulesByGroups(groups!);
-      }
+      const json = getItem("corpuses");
+      const json2 = getItem("selectedCorpusId");
+
+      if (json && json2) {
+        const corpuses: Corpus[] = JSON.parse(json);
+        const selectedCorpusId: number = +json2;
+
+        const groups = corpuses
+          .find((c) => c.id == selectedCorpusId)!
+          .collections.find((item) => item.id.toString() === params.id)!.groups;
+
+        await getWeekSchedulesByGroups(
+          groups,
+          settingsModel.store.settings.serverAddress
+        );
+
+        if (weekScheduleModel.store.weekScheduleListError) setNoData(true);
+      } else setNoData(true);
     };
 
     useEffect(() => {
-      const setup = async () => {
-        getSettings();
+      getSettings();
+      getAuth();
 
+      (async () => {
         // Первоначальная загрузка данных
         await fetchScheduleData();
 
@@ -51,13 +81,12 @@ export const SchedulePage = observer(
         }
 
         // Установка нового интервала обновления (переводим минуты в миллисекунды)
-        const refreshIntervalMs = settings?.refreshDelay * 60 * 1000;
+        const refreshIntervalMs =
+          settingsModel.store.settings.refreshDelay * 60 * 1000;
         intervalRef.current = setInterval(() => {
           fetchScheduleData();
         }, refreshIntervalMs);
-      };
-
-      setup();
+      })();
 
       // Очистка интервала при размонтировании компонента
       return () => {
@@ -65,13 +94,17 @@ export const SchedulePage = observer(
           clearInterval(intervalRef.current);
         }
       };
-    }, [settings?.refreshDelay]);
+    }, [settingsModel.store.settings.refreshDelay]);
 
     return (
       <ScheduleLayout>
         <HeaderSchedule />
-        {isLoading ? (
+        {isLoading || authModel.store.auth === null ? (
           <Spinner className="m-auto" color="default" size="lg" />
+        ) : isError ? (
+          <div className="flex w-full h-full text-yellow-400 justify-center place-items-center">
+            <Icon data={mdiAlert} size={100} />
+          </div>
         ) : (
           weekScheduleList.map((item, index) => {
             return <WeekScheduleItem key={index} weekSchedule={item} />;

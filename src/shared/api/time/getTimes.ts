@@ -2,7 +2,7 @@ import axios from "axios";
 import { TimeSchedule } from "./model";
 import { getItem, getTimeScheduleKey, setItem } from "@/shared/lib/cache";
 
-export const getTimes = async (date: Date): Promise<TimeSchedule[]> => {
+export const getTimes = async (date: Date, serverAddress: string): Promise<TimeSchedule[]> => {
   const cacheKey = getTimeScheduleKey(date);
 
   const cachedData = getItem(cacheKey);
@@ -13,7 +13,7 @@ export const getTimes = async (date: Date): Promise<TimeSchedule[]> => {
   try {
     const response = await axios.post(
       "http://localhost:3000/api/time",
-      { date: date.toISOString() },
+      { date: date.toISOString(), serverAddress },
       {
         headers: { "Content-Type": "application/json" },
       }

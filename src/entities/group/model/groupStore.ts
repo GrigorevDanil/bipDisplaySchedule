@@ -1,11 +1,12 @@
 import { getGroups } from "@/shared/api/group";
-import { Collection, Group } from "@/shared/api/group/model";
+import { Corpus, Group } from "@/shared/api/group/model";
 import { getItem } from "@/shared/lib/storage";
 import { makeAutoObservable, runInAction } from "mobx";
 
 class GroupStore {
   groupList: Group[] = [];
-  collectionList: Collection[] = [];
+  corpusList: Corpus[] = [];
+  selectedCorpusId: number | null = null;
   isLoading = false;
   groupListError = "";
   isUpdateLoading = false;
@@ -14,15 +15,16 @@ class GroupStore {
     makeAutoObservable(this);
   }
 
-  getGroupList = async () => {
+  getGroupList = async (serverAddress: string) => {
     try {
       this.isLoading = true;
 
-      const data = await getGroups();
+      const data = await getGroups(serverAddress);
 
       runInAction(() => {
         this.isLoading = false;
         this.groupList = data;
+        this.groupListError = "";
       });
     } catch (error) {
       if (error instanceof Error) {
@@ -34,18 +36,31 @@ class GroupStore {
     }
   };
 
-  getCollectionList = () => {
-    const collectionsData = getItem('collections');
+  getCorpusList = () => {
+    const corpusesData = getItem('corpuses');
 
-    if (!collectionsData)
+    if (!corpusesData)
       return runInAction(() => {
-        this.collectionList = [];
+        this.corpusList = [];
       });
 
     runInAction(() => {
-      this.collectionList = JSON.parse(collectionsData);
+      this.corpusList = JSON.parse(corpusesData);
     });
   }
+
+  getSelectedCorpusId = () => {
+    const selectedCorpusId = getItem('selectedCorpusId');
+
+    if (!selectedCorpusId)
+      return runInAction(() => {
+        this.selectedCorpusId = null;
+      });
+
+    runInAction(() => {
+      this.selectedCorpusId = JSON.parse(selectedCorpusId);
+    });
+  };
 }
 
 export const store = new GroupStore();

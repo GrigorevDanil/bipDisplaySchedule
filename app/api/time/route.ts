@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+
 import { postRequestTime } from "@/shared/api/time";
 
 interface RequestBody {
   date: string;
+  serverAddress: string;
 }
 
 export const POST = async (request: Request) => {
@@ -14,7 +16,7 @@ export const POST = async (request: Request) => {
       throw new Error("Invalid date format");
     }
 
-    const groups = await postRequestTime(date);
+    const groups = await postRequestTime(date, body.serverAddress);
 
     return NextResponse.json(groups);
   } catch (error) {

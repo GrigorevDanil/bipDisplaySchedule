@@ -12,30 +12,30 @@ export class ScheduleStore {
     makeAutoObservable(this);
   }
 
-  // Existing method to fetch schedule for a single day
-  getSheduleList = async (titleGroup: string, date: Date) => {
-    try {
-      this.isLoading = true;
+  // // Existing method to fetch schedule for a single day
+  // getSheduleList = async (titleGroup: string, date: Date) => {
+  //   try {
+  //     this.isLoading = true;
 
-      const data = await getGroupSchedules(titleGroup, date);
+  //     const data = await getGroupSchedules(titleGroup, date);
 
-      runInAction(() => {
-        this.isLoading = false;
-        this.scheduleList = data;
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        runInAction(() => {
-          this.isLoading = false;
-          this.scheduleListError = error.message;
-          console.log(error);
-        });
-      }
-    }
-  };
+  //     runInAction(() => {
+  //       this.isLoading = false;
+  //       this.scheduleList = data;
+  //     });
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       runInAction(() => {
+  //         this.isLoading = false;
+  //         this.scheduleListError = error.message;
+  //         console.log(error);
+  //       });
+  //     }
+  //   }
+  // };
 
   // New method to fetch schedule for the entire week
-  getCurrentWeekSchedule = async (titleGroup: string) => {
+  getCurrentWeekSchedule = async (titleGroup: string, serverAddress: string) => {
     try {
       this.isLoading = true;
       const weeklySchedule: Schedule[] = [];
@@ -48,7 +48,7 @@ export class ScheduleStore {
 
       // Fetch schedule for all days of the week in parallel
       const schedulesPromises = weekDates.map((date) =>
-        getGroupSchedules(titleGroup, date)
+        getGroupSchedules(titleGroup, date, serverAddress)
       );
       const results = await Promise.allSettled(schedulesPromises);
 
@@ -57,9 +57,7 @@ export class ScheduleStore {
         if (result.status === "fulfilled") {
           weeklySchedule.push(...result.value);
         } else {
-          console.log(
-            `Error fetching schedule for ${weekDates[index].toISOString()}: ${result.reason}`
-          );
+          throw new Error("No data");
         }
       });
 
@@ -67,13 +65,13 @@ export class ScheduleStore {
       runInAction(() => {
         this.isLoading = false;
         this.scheduleList = weeklySchedule;
+        this.scheduleListError = "";
       });
     } catch (error) {
       if (error instanceof Error) {
         runInAction(() => {
           this.isLoading = false;
           this.scheduleListError = error.message;
-          console.log(error);
         });
       }
     }
