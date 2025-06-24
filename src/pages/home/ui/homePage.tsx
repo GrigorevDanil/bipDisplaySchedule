@@ -97,7 +97,7 @@ export const HomePage = observer(() => {
       const screenIndex = index % screens.length;
       const screen = screens[screenIndex];
 
-      const url = `http://localhost:3000/schedule/${collection.id}`;
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/schedule/${collection.id}`;
       const windowFeatures = `
         left=${screen.left},
         top=${screen.top},

@@ -4,7 +4,10 @@ import { TimeSchedule } from "./model";
 
 import { getItem, getTimeScheduleKey, setItem } from "@/shared/lib/cache";
 
-export const getTimes = async (date: Date, serverAddress: string): Promise<TimeSchedule[]> => {
+export const getTimes = async (
+  date: Date,
+  serverAddress: string
+): Promise<TimeSchedule[]> => {
   const cacheKey = getTimeScheduleKey(date);
 
   const cachedData = getItem(cacheKey);
@@ -15,7 +18,7 @@ export const getTimes = async (date: Date, serverAddress: string): Promise<TimeS
 
   try {
     const response = await axios.post(
-      "http://localhost:3000/api/time",
+      `${process.env.NEXT_PUBLIC_API_URL}/api/time`,
       { date: date.toISOString(), serverAddress },
       {
         headers: { "Content-Type": "application/json" },
