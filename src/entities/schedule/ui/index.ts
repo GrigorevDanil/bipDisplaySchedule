@@ -1,2 +1,2 @@
-export { ScheduleItem } from "./scheduleItem";
-export { ScheduleItemSkeleton } from "./scheduleItemSkeleton";
+export { ScheduleCard } from "./scheduleCard";
+export { WeekScheduleCard } from "./weekScheduleCard";

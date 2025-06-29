@@ -5,3 +5,26 @@
 nextjs-portal {
   display: none;
 }
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  90% {
+    transform: translateX(calc(-100% + 11rem));
+    animation-timing-function: ease-in;
+  }
+  100% {
+    transform: translateX(0);
+    animation-timing-function: ease-out;
+  }
+}
+
+.animate-scroll {
+  animation: scroll 15s linear infinite;
+  animation-delay: 1s;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}

@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  reactStrictMode: true, // Optional: Enables React Strict Mode
+  reactStrictMode: false,
   devIndicators: {
-    buildActivity: true, // Shows build activity indicator
+    buildActivity: true,
   },
 };

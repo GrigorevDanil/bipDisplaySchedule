@@ -1,20 +1,8 @@
 import axios from "axios";
 
-const username = "WebService";
-const password = "30pisoM";
-
-const userLogin = "adminStudent3";
-const userPassword = "adminStudent3";
-
-const httpClient = axios.create({
-  method: "POST",
+export const httpClientApp = axios.create({
   headers: {
-    "Content-Type": "application/xml",
+    "Content-Type": "application/json",
   },
-  auth: {
-    username: username,
-    password: password,
-  },
+  withCredentials: true,
 });
-
-export { httpClient, userLogin, userPassword, username, password };

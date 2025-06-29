@@ -1,51 +1,38 @@
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
-import { postRequestGroup } from "@/shared/api/group/postRequest";
+import { handleGetGroups } from "../../lib/api/handlers/group/get";
+import { parseJsonRequest } from "../../lib/api/parserJsonRequest";
+import { GetGroupsRequestSchema } from "../../lib/api/handlers/group/get/validator";
+import {
+  InternalServerError,
+  InvalidData,
+  Ok,
+  Unauthorized,
+} from "../../lib/api/responses";
+import { getCredentials } from "../../lib/api/getCredentials";
 
-export const POST = async (req: Request) => {
+export const POST = async (request: NextRequest) => {
   try {
-    // Проверяем Content-Type заголовок
-    const contentType = req.headers.get("content-type");
+    const credentials = getCredentials(request);
 
-    if (!contentType?.includes("application/json")) {
-      return NextResponse.json(
-        { error: "Request must be JSON" },
-        { status: 400 }
-      );
-    }
+    if (!credentials) return Unauthorized();
 
-    // Пытаемся прочитать тело запроса
-    let data;
+    const jsonRequest = await parseJsonRequest(request);
 
-    try {
-      data = await req.json();
-    } catch (e) {
-      return NextResponse.json(
-        { error: "Invalid JSON format" },
-        { status: 400 }
-      );
-    }
+    const validation = await GetGroupsRequestSchema.safeParseAsync(jsonRequest);
 
-    // Проверяем наличие обязательных полей
-    if (!data?.serverAddress?.trim()) {
-      return NextResponse.json(
-        { error: "Enter server address in the settings!" },
-        { status: 400 }
-      );
-    }
+    if (!validation.success) return InvalidData(validation.error.flatten());
 
-    const groups = await postRequestGroup(data.serverAddress);
+    const { serverAddress } = validation.data;
 
-    return NextResponse.json(groups);
-  } catch (error) {
-    console.error("Ошибка в API Route:", error);
-
-    return NextResponse.json(
-      {
-        error: "Internal Server Error",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
+    const groups = await handleGetGroups(
+      serverAddress,
+      credentials.username,
+      credentials.password
     );
+
+    return Ok(groups);
+  } catch (error) {
+    return InternalServerError(error);
   }
 };
