@@ -10,19 +10,13 @@ import {
   mdiTrashCan,
 } from "@mdi/js";
 import clsx from "clsx";
-
-import { Corpus } from "@/entities/corpus";
-import { DialogDelete } from "@/features/dialogDelete";
-import { Icon } from "@/shared/ui/icon";
-import { Collection, collectionModel } from "@/entities/collection";
 import { observer } from "mobx-react-lite";
 
-type Props = {
-  corpus: Corpus | undefined;
-  collection: Collection | undefined;
-};
+import { DialogDelete } from "@/features/dialogDelete";
+import { Icon } from "@/shared/ui/icon";
+import { collectionModel } from "@/entities/collection";
 
-export const CollectionDisplay = observer(({ corpus, collection }: Props) => {
+export const CollectionDisplay = observer(() => {
   const {
     store: {
       getCollection,
@@ -34,6 +28,8 @@ export const CollectionDisplay = observer(({ corpus, collection }: Props) => {
       moveSelectedCollectionDown,
       moveSelectedCollectionUp,
       updateSelectedCollection,
+      corpus,
+      collection,
     },
   } = collectionModel;
 

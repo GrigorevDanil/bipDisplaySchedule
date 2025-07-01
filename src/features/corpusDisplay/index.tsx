@@ -5,21 +5,18 @@ import { Input, useDisclosure, Tooltip } from "@heroui/react";
 import { useState } from "react";
 import { mdiPlusThick, mdiTrashCan } from "@mdi/js";
 import clsx from "clsx";
+import { observer } from "mobx-react-lite";
 
 import { DialogDelete } from "@/features/dialogDelete";
 import { Icon } from "@/shared/ui/icon";
-import { Corpus, corpusModel } from "@/entities/corpus";
-import { observer } from "mobx-react-lite";
+import { corpusModel } from "@/entities/corpus";
 import { collectionModel } from "@/entities/collection";
 
-type Props = {
-  corpus: Corpus | undefined;
-  corpusList: Corpus[];
-};
-
-export const CorpusDisplay = observer(({ corpus, corpusList }: Props) => {
+export const CorpusDisplay = observer(() => {
   const {
     store: {
+      corpus,
+      corpusList,
       getCorpus,
       addCorpus,
       updateSelectedCorpus,
@@ -64,8 +61,13 @@ export const CorpusDisplay = observer(({ corpus, corpusList }: Props) => {
         onOpenChange={onOpenChange}
       />
 
-      <div className="flex items-center justify-center">
-        <p className="text-lg text-center pt-2 ">Корпуса</p>
+      <div className="flex-1 flex items-center px-2 pt-2 relative">
+        <div className="absolute left-0 right-0 flex justify-center">
+          <p className="text-lg pt-2">Корпуса</p>
+        </div>
+        <div className="flex gap-2 ml-auto">
+          <Button className="bg-transparent cursor-default" size="lg" />
+        </div>
       </div>
       <div
         className="relative flex flex-col gap-0 overflow-y-auto h-full"
@@ -122,7 +124,9 @@ export const CorpusDisplay = observer(({ corpus, corpusList }: Props) => {
                       setEditingTitle("");
                       setEdit(true);
                     }}
-                    onPress={() => handleSelect(item.id)}
+                    onPress={() => {
+                      handleSelect(item.id);
+                    }}
                   >
                     {item.title}
                   </Button>

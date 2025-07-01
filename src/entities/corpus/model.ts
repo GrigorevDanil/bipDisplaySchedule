@@ -1,5 +1,5 @@
-import { makeAutoObservable } from "mobx";
 import { v4 as randomUUID } from "uuid";
+import { makeAutoObservable } from "mobx";
 
 import { Corpus } from "./type";
 
@@ -11,7 +11,7 @@ import {
 
 export class CorpusStore {
   corpusList: Corpus[] = [];
-  corpus?: Corpus;
+  corpus: Corpus | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this);

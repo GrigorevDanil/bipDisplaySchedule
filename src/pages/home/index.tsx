@@ -21,7 +21,6 @@ import { Icon } from "@/shared/ui/icon";
 import { corpusModel } from "@/entities/corpus";
 import { DialogSettings } from "@/features/dialogSettings";
 import { authModel } from "@/entities/auth";
-import { collectionModel } from "@/entities/collection";
 import { groupModel } from "@/entities/group";
 import { settingsModel } from "@/entities/settings";
 
@@ -39,23 +38,11 @@ export const HomePage = observer(() => {
   } = settingsModel;
 
   const {
-    store: { getCorpusList, corpusList, corpus },
+    store: { getCorpusList, corpus },
   } = corpusModel;
 
   const {
-    store: { collection },
-  } = collectionModel;
-
-  const {
-    store: {
-      availableGroups,
-      getGroupList,
-      groupListError,
-      isLoading,
-      group,
-      resetError,
-      isError,
-    },
+    store: { getGroupList, groupListError, resetError, isError },
   } = groupModel;
 
   useEffect(() => {
@@ -110,7 +97,7 @@ export const HomePage = observer(() => {
             `height=${screenDetails.screens[index % screenDetails.screens.length].height}`
           : "";
 
-        window.open(url, `_blank_${collection.id}`, windowFeatures);
+        window.open(url, `_blank`, windowFeatures);
       });
 
       setDisplaysOpen(true);
@@ -136,16 +123,17 @@ export const HomePage = observer(() => {
     if (corpus) {
       corpus.collections.forEach((collection) => {
         const windowName = `_blank_${collection.id}`;
-
         const scheduleWindow = window.open("", windowName);
 
         if (scheduleWindow && !scheduleWindow.closed) {
           if (
-            scheduleWindow.location.href.includes(`/schedule/${collection.id}`)
+            scheduleWindow.location.href.includes(
+              `/schedule/${corpus.id}/${collection.id}`
+            )
           ) {
             scheduleWindow.location.reload();
           } else {
-            scheduleWindow.location.href = `${process.env.NEXT_PUBLIC_API_URL}/schedule/${collection.id}`;
+            scheduleWindow.close();
           }
         }
       });
@@ -164,14 +152,9 @@ export const HomePage = observer(() => {
         />
 
         <div className="flex flex-row gap-2 h-[400px]">
-          <CorpusDisplay corpus={corpus} corpusList={corpusList} />
-          <CollectionDisplay collection={collection} corpus={corpus} />
-          <GroupDisplay
-            availableGroups={availableGroups}
-            collection={collection}
-            group={group}
-            isLoading={isLoading}
-          />
+          <CorpusDisplay />
+          <CollectionDisplay />
+          <GroupDisplay />
         </div>
 
         <div className="flex gap-2">
@@ -205,6 +188,7 @@ export const HomePage = observer(() => {
           </Button>
           <Button
             color="success"
+            isDisabled={!isDisplaysOpen}
             size="lg"
             startContent={<Icon as={mdiRefresh} />}
             onPress={handleRefreshSchedules}

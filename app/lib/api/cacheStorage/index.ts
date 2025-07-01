@@ -1,3 +1,4 @@
+import { StorageItem } from "@/shared/lib/storage/type";
 import { getDateInFormatddMMyyyy } from "@/shared/lib/time";
 
 const cache: Record<string, StorageItem> = {};

@@ -54,8 +54,6 @@ export const handleGetSchedule = async (
     return new Promise((resolve, reject) => {
       parseXml(response.data, { explicitArray: false }, (err, result) => {
         if (err) {
-          console.error("Ошибка парсинга XML:", err);
-
           return reject(err);
         }
 
@@ -103,7 +101,6 @@ export const handleGetSchedule = async (
       });
     });
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };

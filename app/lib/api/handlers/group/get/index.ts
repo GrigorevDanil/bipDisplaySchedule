@@ -28,8 +28,6 @@ export const handleGetGroups = async (
     const groups = await new Promise<Group[]>((resolve, reject) => {
       parseXml(response.data, { explicitArray: false }, (err, result) => {
         if (err) {
-          console.error("Ошибка парсинга XML:", err);
-
           return reject(err);
         }
 
@@ -48,7 +46,6 @@ export const handleGetGroups = async (
 
     return groups;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };

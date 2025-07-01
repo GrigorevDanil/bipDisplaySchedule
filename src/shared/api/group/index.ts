@@ -13,7 +13,6 @@ export const getGroups = async (serverAddress: string): Promise<Group[]> => {
 
     return response.data;
   } catch (error) {
-    console.error(error);
     throw error;
   }
 };

@@ -1,59 +1,43 @@
+import { StorageItem } from "./type";
+
 export const setItemInLocalStorage = (
   key: string,
   value: string,
   ttl?: number
 ) => {
-  try {
-    const item: StorageItem = { value };
+  const item: StorageItem = { value };
 
-    if (ttl) {
-      item.timestamp = Date.now() + ttl;
-    }
-
-    localStorage.setItem(key, JSON.stringify(item));
-  } catch (error) {
-    console.error("Ошибка сохранения данных", error);
+  if (ttl) {
+    item.timestamp = Date.now() + ttl;
   }
+
+  localStorage.setItem(key, JSON.stringify(item));
 };
 
 export const getItemFromLocalStorage = (key: string) => {
-  try {
-    const item = localStorage.getItem(key);
+  const item = localStorage.getItem(key);
 
-    if (item) {
-      const parsedItem: StorageItem = JSON.parse(item);
+  if (item) {
+    const parsedItem: StorageItem = JSON.parse(item);
 
-      if (parsedItem.timestamp && Date.now() > parsedItem.timestamp) {
-        localStorage.removeItem(key);
+    if (parsedItem.timestamp && Date.now() > parsedItem.timestamp) {
+      localStorage.removeItem(key);
 
-        return null;
-      }
-
-      return parsedItem.value;
+      return null;
     }
 
-    return null;
-  } catch (error) {
-    console.error("Ошибка чтения данных", error);
-
-    return null;
+    return parsedItem.value;
   }
+
+  return null;
 };
 
 export const removeItemInLocalStorage = (key: string) => {
-  try {
-    localStorage.removeItem(key);
-  } catch (error) {
-    console.error("Ошибка удаление данных", error);
-  }
+  localStorage.removeItem(key);
 };
 
 export const clearLocalStorageStorage = () => {
-  try {
-    localStorage.clear();
-  } catch (error) {
-    console.error("Ошибка очистки хранилища", error);
-  }
+  localStorage.clear();
 };
 
 export const CORPUSES_KEY = "corpuses";

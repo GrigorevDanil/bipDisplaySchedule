@@ -22,7 +22,6 @@ export const getSchedule = async (
 
     return response.data;
   } catch (error) {
-    console.error("Ошибка в getSchedule:", error);
     throw error;
   }
 };

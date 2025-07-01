@@ -10,7 +10,7 @@ import { getGroups } from "@/shared/api/group";
 
 export class GroupStore {
   groupList: Group[] = [];
-  group?: Group;
+  group: Group | undefined = undefined;
   isLoading = false;
   groupListError = "";
   isError: boolean = false;
@@ -32,9 +32,9 @@ export class GroupStore {
       this.collection.groups.map((g) => g.title)
     );
 
-    return this.groupList.filter(
-      (group) => !currentGroupTitles.has(group.title)
-    );
+    return this.groupList
+      .filter((group) => !currentGroupTitles.has(group.title))
+      .map((group) => ({ ...group }));
   }
 
   constructor(
@@ -94,10 +94,27 @@ export class GroupStore {
     this.group = this.groupList.find((x) => x.title === title);
   };
 
-  addGroup = (group: Group) => {
+  selectGroup = (title: string) => {
+    this.groupList = this.groupList.map((group) =>
+      group.title === title
+        ? { ...group, isSelected: !group.isSelected }
+        : group
+    );
+  };
+
+  resetGroupSelection = () => {
+    this.groupList = this.groupList.map((group) => ({
+      ...group,
+      isSelected: false,
+    }));
+  };
+
+  addGroups = () => {
     if (!this.collection) return;
 
-    this.collection.groups.push(group);
+    const selectedGroups = this.groupList.filter((group) => group.isSelected);
+
+    this.collection.groups.push(...selectedGroups);
 
     this.saveToLocalStorage();
   };

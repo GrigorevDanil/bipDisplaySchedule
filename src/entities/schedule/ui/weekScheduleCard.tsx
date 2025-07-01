@@ -9,8 +9,6 @@ type Props = {
 };
 
 export const WeekScheduleCard = ({ scheduleByGroup }: Props) => {
-  console.log(scheduleByGroup);
-
   return (
     <div className="flex flex-col bg-gray-50 rounded-lg py-6 px-2 text-sm h-full w-[230px]">
       <div className="flex flex-col gap-2 items-center h-full">
@@ -22,7 +20,7 @@ export const WeekScheduleCard = ({ scheduleByGroup }: Props) => {
         <Divider orientation="horizontal" />
         <div className="flex-1 flex flex-col items-center justify-between w-full divide-y-3 gap-1 divide-blue-500">
           {scheduleByGroup.items.map((schedule, index) => (
-            <div key={index} className="flex-1 flex flex-col w-full">
+            <div key={index} className="flex-1 flex flex-col w-full gap-1">
               {schedule.items.map((item, indx) => (
                 <ScheduleCard key={`${index} ${indx}`} schedule={item} />
               ))}

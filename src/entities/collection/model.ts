@@ -7,7 +7,7 @@ import { CorpusStore } from "../corpus/model";
 import { Collection } from "./type";
 
 export class CollectionStore {
-  collection?: Collection;
+  collection: Collection | undefined = undefined;
 
   get corpus(): Corpus | undefined {
     return this.corpusStore.corpus;
@@ -110,6 +110,7 @@ export class CollectionStore {
       this.deleteCollection(this.collection.id);
       this.collection = undefined;
     }
+    this.saveToLocalStorage();
   };
 
   moveCollectionUp = (idCollection: string) => {

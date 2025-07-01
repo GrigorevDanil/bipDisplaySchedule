@@ -27,6 +27,7 @@ export const SchedulePageContent = observer(
     } = authModel;
 
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const {
       store: { getSettings, settings },
@@ -44,8 +45,6 @@ export const SchedulePageContent = observer(
       store: { isLoading, weekScheduleList, getWeekScheduleByGroups },
     } = scheduleModel;
 
-    const [isFirstLoading, setFirstLoading] = useState<boolean>(true);
-
     useEffect(() => {
       if (!isAuth) {
         router.push("/login");
@@ -54,7 +53,6 @@ export const SchedulePageContent = observer(
 
     useEffect(() => {
       const init = async () => {
-        getSettings();
         getCorpusList();
         getCorpus(corpusId);
         getCollection(collectionId);
@@ -65,11 +63,16 @@ export const SchedulePageContent = observer(
 
     useEffect(() => {
       const loadSchedule = async () => {
+        getSettings();
         if (collection) {
-          await getWeekScheduleByGroups(
-            collection.groups,
-            settings.serverAddress
-          );
+          try {
+            await getWeekScheduleByGroups(
+              collection.groups,
+              settings.serverAddress
+            );
+          } finally {
+            setIsInitialLoad(false);
+          }
 
           const refreshIntervalMs = settings.refreshDelay * 60 * 1000;
 
@@ -83,16 +86,22 @@ export const SchedulePageContent = observer(
       };
 
       loadSchedule();
-    }, [collection]);
+
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+      };
+    }, [collection, settings.serverAddress, settings.refreshDelay]);
 
     const renderSchedules = () => {
-      if (isFirstLoading && isLoading) {
-        setFirstLoading(false);
+      if (isInitialLoad && isLoading) {
         return <Spinner className="m-auto" color="default" size="lg" />;
-      } else
-        return weekScheduleList.map((item, index) => (
-          <WeekScheduleCard key={index} scheduleByGroup={item} />
-        ));
+      }
+
+      return weekScheduleList.map((item, index) => (
+        <WeekScheduleCard key={index} scheduleByGroup={item} />
+      ));
     };
 
     return (

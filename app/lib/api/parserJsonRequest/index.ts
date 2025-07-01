@@ -14,7 +14,7 @@ export const parseJsonRequest = async <T = any>(
 
   try {
     return await req.json();
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: "Invalid JSON format" }, { status: 400 });
   }
 };

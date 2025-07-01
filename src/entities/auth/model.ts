@@ -50,9 +50,7 @@ class AuthStore {
       });
 
       return true;
-    } catch (error) {
-      console.error("Login failed:", error);
-
+    } catch {
       return false;
     }
   };

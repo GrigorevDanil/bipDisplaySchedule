@@ -42,8 +42,6 @@ export const POST = async (request: NextRequest) => {
 
     return Ok(schedule);
   } catch (error) {
-    console.error("Error in POST handler:", error);
-
     return InternalServerError(error);
   }
 };
